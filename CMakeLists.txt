@@ -7,4 +7,5 @@ add_executable(Project_2 main.c
         controller/controller.c
         model/model.c
         view/view.c
+        view/view.h
 )
