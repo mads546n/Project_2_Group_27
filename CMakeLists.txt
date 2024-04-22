@@ -8,4 +8,6 @@ add_executable(Project_2 main.c
         model/model.c
         view/view.c
         view/view.h
+        controller/controller.h
+        model/model.h
 )
