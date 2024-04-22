@@ -6,18 +6,18 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
 
     // Display the columns
     printf("Columns:\n");
-    printf("C1 C2 C3 C4 C5 C6 C7\n");
+    printf("C1\tC2\tC3\tC4\tC5\tC6\tC7\n");
     if (!areColumnsEmpty) {
         for (int i = 0; i < 7; i++) {
             if (columns[i][0].rank != '\0') {
-                printf("[%c%c] ", columns[i][0].rank, columns[i][0].suit);
+                printf("[%c%c]\t", columns[i][0].rank, columns[i][0].suit);
             } else {
-                printf("[ ] ");
+                printf("[]\t");
             }
         }
     } else {
         for (int i = 0; i < 7; i++) {
-            printf("[ ] ");
+            printf("[]\t");
         }
     }
     printf("\n\n");
@@ -25,7 +25,7 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
     // Display the foundations as empty
     printf("Foundations:\n");
     for (int i = 0; i < 4; i++) {
-        printf("F%d [ ]\n", i + 1);
+        printf("F%d []\n", i + 1);
     }
     printf("\n");
 
