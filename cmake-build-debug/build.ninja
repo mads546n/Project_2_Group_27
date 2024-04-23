@@ -73,6 +73,12 @@ build CMakeFiles/Project_2.dir/view/view.c.obj: C_COMPILER__Project_2_unscanned_
   OBJECT_DIR = CMakeFiles\Project_2.dir
   OBJECT_FILE_DIR = CMakeFiles\Project_2.dir\view
 
+build CMakeFiles/Project_2.dir/model/card.c.obj: C_COMPILER__Project_2_unscanned_Debug C$:/Users/edvar/OneDrive/Dokumenter/DTU/Project-2/model/card.c || cmake_object_order_depends_target_Project_2
+  DEP_FILE = CMakeFiles\Project_2.dir\model\card.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Project_2.dir
+  OBJECT_FILE_DIR = CMakeFiles\Project_2.dir\model
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Project_2
@@ -81,7 +87,7 @@ build CMakeFiles/Project_2.dir/view/view.c.obj: C_COMPILER__Project_2_unscanned_
 #############################################
 # Link the executable Project_2.exe
 
-build Project_2.exe: C_EXECUTABLE_LINKER__Project_2_Debug CMakeFiles/Project_2.dir/main.c.obj CMakeFiles/Project_2.dir/controller/controller.c.obj CMakeFiles/Project_2.dir/model/model.c.obj CMakeFiles/Project_2.dir/view/view.c.obj
+build Project_2.exe: C_EXECUTABLE_LINKER__Project_2_Debug CMakeFiles/Project_2.dir/main.c.obj CMakeFiles/Project_2.dir/controller/controller.c.obj CMakeFiles/Project_2.dir/model/model.c.obj CMakeFiles/Project_2.dir/view/view.c.obj CMakeFiles/Project_2.dir/model/card.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Project_2.dir

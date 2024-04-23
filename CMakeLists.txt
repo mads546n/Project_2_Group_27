@@ -10,4 +10,6 @@ add_executable(Project_2 main.c
         view/view.h
         controller/controller.h
         model/model.h
+        model/card.c
+        model/card.h
 )

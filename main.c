@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "view/view.h"
+#include "model/card.h"
 
 int main() {
     // Sample game state
