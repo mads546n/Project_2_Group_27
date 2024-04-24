@@ -2,18 +2,6 @@
 #include <stdlib.h>
 #include "card.h"
 
-// Define the structure of a card
-typedef struct Card {
-    char rank;
-    char suit;
-    struct Card *next;
-} Card;
-
-// Define the structure of a column
-typedef struct Column {
-    Card *top; // Create a pointer to the top card of the column
-} Column;
-
 // Function used to initialize a new column
 Column *createColumn() {
     Column *column = (Column *)malloc(sizeof(Column));
@@ -59,14 +47,27 @@ void freeColumn(Column *column) {
     free(column);
 }
 
+int getDeckSize(Card *deck) {
+    int size = 0;
+    Card *current = deck;
+    while (current != NULL) {
+        size++;
+        current = current->next;
+    }
+    return size;
+}
+
 // Function to distribute cards among columns (currently evenly)
 void distributeCards(Card *deck, Column *columns[], int numColumns) {
 
+    // Calculate size of deck
+    int deckSize = getDeckSize(deck);
+
     // Calculate amount of cards per column
-    int cardsPerColumn = (DECK_SIZE + numColumns - 1) / numColumns; // Round up result
+    int cardsPerColumn = (deckSize + numColumns - 1) / numColumns; // Round up result
 
     int columnIndex = 0;
-    int cardsRemaining = DECK_SIZE;
+    int cardsRemaining = deckSize;
 
     // Iterate through the deck
     while (deck != NULL && columnIndex < numColumns) {
@@ -89,30 +90,12 @@ void distributeCards(Card *deck, Column *columns[], int numColumns) {
     }
 }
 
-// Sample game state to test functionality
-int testmain() {
-    Column *columns[7]; //Array of pointers to columns
-    for (int i = 0; i < 7; i++) {
-        columns[i] = createColumn(); // Initialize each of the columns
+// Function to initialize a sample deck
+void initializeSampleDeck(Card columns[][13]) {
+    for (int col = 0; col < 7; col++) {
+        for (int row = 0; row < 13; row++) {
+            columns[col][row].rank = 'O' + row + 2;
+            columns[col][row].suit = 'H';
+        }
     }
-
-    // Push cards into the columns
-    push(columns[0], 'H', '5');
-    push(columns[0], 'D', '1');
-    push(columns[1], 'S', 'Q');
-
-    // Print content of columns
-    printf("Displaying columns:\n");
-    for (int i = 0; i < 7; i++) {
-        printf("Column %d: ", i + 1);
-        printColumn(columns[i]);
-    }
-
-    // Free allocated memory
-    for (int i = 0; i < 7; i++) {
-        freeColumn(columns[i]);
-    }
-
-    return 0;
 }
-

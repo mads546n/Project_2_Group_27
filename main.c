@@ -4,7 +4,9 @@
 
 int main() {
     // Sample game state
-    Card columns[7][7]; // Initially empty columns
+    Card columns[7][13]; // Initially empty columns
+
+    initializeSampleDeck(columns);
 
     char message[50] = "OK";
 

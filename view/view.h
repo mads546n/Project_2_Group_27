@@ -2,11 +2,7 @@
 #define VIEW_H
 
 #include <stdbool.h>
-
-typedef struct Card {
-    char rank;
-    char suit;
-} Card;
+#include "../model/card.h"
 
 void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message);
 
