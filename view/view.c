@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "view.h"
 
-void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
+void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* lastCommand) {
     printf("Yukon Solitaire\n\n");
 
     // Display the columns
@@ -28,6 +28,8 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
         printf("F%d []\n", i + 1);
     }
     printf("\n");
+
+    printf("LAST command: %s\n", lastCommand);
 
     // Display message
     printf("Message: %s\n", message);
