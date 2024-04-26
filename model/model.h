@@ -4,5 +4,5 @@
 
 #ifndef PROJECT_2_MODEL_H
 #define PROJECT_2_MODEL_H
-
+void command (const char* chr);
 #endif //PROJECT_2_MODEL_H

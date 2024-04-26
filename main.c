@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "view/view.h"
-
+#include "controller/controller.h"
 int main() {
     // Sample game state
     Card columns[7][7]; // Initially empty columns
@@ -11,6 +11,7 @@ int main() {
 
     // Display the game board
     displayBoard(columns, isEmpty, message);
+    input();
 
     return 0;
 }
