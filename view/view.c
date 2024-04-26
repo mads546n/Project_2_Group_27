@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "view.h"
 
-void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
+void displayBoard(Column *columns[], bool areColumnsEmpty, char* message) {
     printf("Yukon Solitaire\n\n");
 
     // Display the columns
@@ -13,10 +13,11 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
         bool isEmptyRow = true; // Flag to track if row is empty
         for (int col = 0; col < 7; col++) {
             // Print current card in the column and row
-            if (columns[col][row].rank != '\0') {
+            if (columns[col]->top != NULL) {
                 // Print the card if it exists
-                printf("[%c%c]\t", columns[col][row].rank, columns[col][row].suit);
+                printf("[%c%c]\t", columns[col]->top->suit, columns[col]->top->rank);
                 isEmptyRow = false; // Now mark the row as "not empty"
+                columns[col]->top = columns[col]->top->next;
             } else {
                 printf("[]\t");
             }
@@ -27,23 +28,6 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
         }
     }
     printf("\n");
-
-           /*if (!areColumnsEmpty) {
-                for (int i = 0; i < 7; i++) {
-                    if (columns[i][0].rank != '\0') {
-                        printf("[%c%c]\t", columns[i][0].rank, columns[i][0].suit);
-                    } else {
-                        printf("[]\t");
-                    }
-                }
-            } else {
-                for (int i = 0; i < 7; i++) {
-                    printf("[]\t");
-                }
-            }
-            printf("\n\n");
-        }
-    }*/
 
     // Display the foundations as empty
     printf("Foundations:\n");

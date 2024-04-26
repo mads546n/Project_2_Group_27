@@ -24,6 +24,8 @@ Column* createColumn();
 void push(Column *column, char suit, char rank);
 void printColumn(Column *column);
 void freeColumn(Column *column);
-void initializeSampleDeck(Card columns[][13]);
+void initializeSampleDeck(Card *deck);
+void distributeCards(Card *deck, Column *columns[], int numColumns);
+int getDeckSize(Card *deck);
 
 #endif //PROJECT_2_CARD_H

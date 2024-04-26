@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "card.h"
 
 // Function used to initialize a new column
@@ -59,43 +60,39 @@ int getDeckSize(Card *deck) {
 
 // Function to distribute cards among columns (currently evenly)
 void distributeCards(Card *deck, Column *columns[], int numColumns) {
-
-    // Calculate size of deck
-    int deckSize = getDeckSize(deck);
-
-    // Calculate amount of cards per column
-    int cardsPerColumn = (deckSize + numColumns - 1) / numColumns; // Round up result
-
     int columnIndex = 0;
-    int cardsRemaining = deckSize;
+    int faceDownCards = 21;
 
-    // Iterate through the deck
-    while (deck != NULL && columnIndex < numColumns) {
+    while (deck != NULL) {
+        bool isFaceDown = faceDownCards > 0;
 
-        // Push card into the current column
         push(columns[columnIndex], deck->suit, deck->rank);
 
-        // Move to next card in deck
+        if (isFaceDown) {
+            faceDownCards--;
+        }
+
+        columnIndex++;
+
+        if (columnIndex >= numColumns) {
+            columnIndex = 0;
+        }
+
         Card *temp = deck;
         deck = deck->next;
-        free(temp); // Free the card. It's now a part of the column
-
-        // Update remaining cards
-        cardsRemaining--;
-
-        // Move to next column if current is full
-        if (cardsRemaining % cardsPerColumn == 0) {
-            columnIndex++;
-        }
+        free(temp);
     }
 }
 
 // Function to initialize a sample deck
-void initializeSampleDeck(Card columns[][13]) {
-    for (int col = 0; col < 7; col++) {
-        for (int row = 0; row < 13; row++) {
-            columns[col][row].rank = 'O' + row + 2;
-            columns[col][row].suit = 'H';
+void initializeSampleDeck(Card *deck) {
+    char suits[] = {'H', 'D', 'C', 'S'};
+    int index = 0;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 2; j <= 14; j++) {
+            deck[index].suit = suits[i];
+            deck[index].rank = j;
+            index++;
         }
     }
 }

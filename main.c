@@ -3,17 +3,24 @@
 #include "model/card.h"
 
 int main() {
-    // Sample game state
-    Card columns[7][13]; // Initially empty columns
+    Card deck[52];
+    initializeSampleDeck(deck);
 
-    initializeSampleDeck(columns);
+    Column *columns[7];
+    for (int i = 0; i < 7; i++) {
+        columns[i] = createColumn();
+    }
+
+    distributeCards(deck, columns, 7);
 
     char message[50] = "OK";
+    bool isEmpty = true;
 
-    bool isEmpty = true; // Flag to indicate if the game board is empty
-
-    // Display the game board
     displayBoard(columns, isEmpty, message);
+
+    for (int i = 0; i < 7; i++) {
+        freeColumn(columns[i]);
+    }
 
     return 0;
 }
