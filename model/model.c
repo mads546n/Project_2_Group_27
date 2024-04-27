@@ -28,7 +28,7 @@ void insertStart(struct Deck** head, char* card){
 void insertEnd(struct Deck** head, char* card){
     struct Deck* newNode
             = (struct Deck*)malloc(sizeof(struct Deck));
-    printf("size of malloc is%llu",sizeof(struct Deck));
+//    printf("size of malloc is%llu",sizeof(struct Deck));
 
     // store the card in the new Deck
     newNode->card = card;
