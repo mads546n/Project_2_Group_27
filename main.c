@@ -11,8 +11,17 @@ int main() {
 
     bool isEmpty = true; // Flag to indicate if the game board is empty
 
-    // Display the game board
-    displayBoard(columns, isEmpty, message, lastCommand);
+
+    while (1) {
+
+        // Display the game board
+        displayBoard(columns, isEmpty, message, lastCommand);
+
+
+    }
 
     return 0;
+
+
+
 }
