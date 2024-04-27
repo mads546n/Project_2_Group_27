@@ -1,5 +1,11 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
 #include "view.h"
+
+// Define maximum length for last command and message
+#define MAX_COMMAND_LENGTH 100
+#define MAX_MESSAGE_LENGTH 100
 
 void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* lastCommand) {
     printf("Yukon Solitaire\n\n");
@@ -29,11 +35,25 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* 
     }
     printf("\n");
 
+    // Display last command
     printf("LAST command: %s\n", lastCommand);
 
     // Display message
     printf("Message: %s\n", message);
 
     // Input prompt
-    printf("Input > ");
+    printf("Input >  ");
+
+    // Handle input
+    char input[MAX_COMMAND_LENGTH];
+    fgets(input, sizeof(input), stdin);
+    // Remove newline character from input
+    input[strcspn(input, "\n")] = 0;
+
+    // Update last command with the input received
+    strncpy(lastCommand, input, MAX_COMMAND_LENGTH);
+
+    // Check if command is valid and update message
+    // For now, assume all commands are valid
+    strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
 }
