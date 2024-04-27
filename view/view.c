@@ -7,32 +7,47 @@
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
 
-void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* lastCommand) {
+void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areColumnsEmpty, char* message, char* lastCommand) {
     printf("Yukon Solitaire\n\n");
 
-    // Display the columns
     printf("Columns:\n");
-    printf("C1\tC2\tC3\tC4\tC5\tC6\tC7\n");
-    if (!areColumnsEmpty) {
-        for (int i = 0; i < 7; i++) {
-            if (columns[i][0].rank != '\0') {
-                printf("[%c%c]\t", columns[i][0].rank, columns[i][0].suit);
-            } else {
-                printf("[]\t");
+    for (int i = 0; i < 7; i++) {
+        printf("C%d\t", i + 1);
+    }
+    printf("\n");
+
+    // Print cards in each of the columns
+    for (int i = 0; i < 7; i++) {
+        ListNode* current = columns[i];
+        bool columnIsEmpty = true; // Flag tracking if column is empty
+        while (current != NULL) {
+            printf("[%c%c]\t", current->card.rank, current->card.suit);
+            current = current->next;
+            columnIsEmpty = false; // The column is NOT empty if we print at least a single card
             }
-        }
-    } else {
-        for (int i = 0; i < 7; i++) {
-            printf("[]\t");
+        if (columnIsEmpty) {
+            printf("[]\t"); // Printing empty column if no cards were printed
         }
     }
-    printf("\n\n");
+    printf("\n");
+
+    // Additional newline
+    printf("\n");
 
     // Display the foundations as empty
     printf("Foundations:\n");
     for (int i = 0; i < 4; i++) {
-        printf("F%d []\n", i + 1);
+        FoundationNode* current = foundations[i];
+        if (current == NULL) {
+            printf("F%d []\n", i + 1); // Print an empty foundation, if it is empty
+        } else {
+            while (current != NULL) {
+                printf("F%d [%c%c]\n", i + 1, current->card.rank, current->card.suit); // Print cards in foundation
+                current = current->next;
+            }
+        }
     }
+
     printf("\n");
 
     // Display last command

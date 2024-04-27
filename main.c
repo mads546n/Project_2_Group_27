@@ -3,7 +3,10 @@
 
 int main() {
     // Sample game state
-    Card columns[7][7]; // Initially empty columns
+
+    // Arrays of pointer to the head of each column and foundation
+    ListNode* columns[7] = {NULL};
+    FoundationNode* foundations[4] = {NULL};
 
     char message[50] = "";
 
@@ -15,7 +18,7 @@ int main() {
     while (1) {
 
         // Display the game board
-        displayBoard(columns, isEmpty, message, lastCommand);
+        displayBoard(columns, foundations, isEmpty, message, lastCommand);
 
 
     }
