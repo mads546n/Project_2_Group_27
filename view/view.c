@@ -16,19 +16,41 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     }
     printf("\n");
 
-    // Print cards in each of the columns
+    // Calculate the max height of call columns
+    int maxHeight = 0;
     for (int i = 0; i < 7; i++) {
         ListNode* current = columns[i];
-        bool columnIsEmpty = true; // Flag tracking if column is empty
+        int height = 0;
         while (current != NULL) {
-            printf("[%c%c]\t", current->card.rank, current->card.suit);
+            height++;
             current = current->next;
-            columnIsEmpty = false; // The column is NOT empty if we print at least a single card
-            }
-        if (columnIsEmpty) {
-            printf("[]\t"); // Printing empty column if no cards were printed
+        }
+        if (height > maxHeight) {
+            maxHeight = height;
         }
     }
+
+    int columnSizes[7] = {1, 6, 7, 8, 9, 10, 11};
+
+    // Print cards in each column
+    for (int row = 0; row < 11; row++) {
+        for (int col = 0; col < 7; col++) {
+            ListNode* current = columns[col];
+            int height = 0;
+            // Skip rows until appropriate height is found
+            while (current != NULL && height < row - (11 - columnSizes[col])) {
+                current = current->next;
+                height++;
+            }
+            if (current != NULL) {
+                printf("[%c%c]\t", current->card.rank, current->card.suit);
+            } else {
+                printf("\t");
+            }
+        }
+        printf("\n");
+    }
+
     printf("\n");
 
     // Additional newline
