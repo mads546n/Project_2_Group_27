@@ -59,3 +59,5 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* 
 }
 
 
+
+
