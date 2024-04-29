@@ -99,7 +99,7 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* 
     strncpy(lastCommand, input, MAX_COMMAND_LENGTH);
 
     // Check if command is valid and update message
-    // For now, assume all commands are valid
+    // For now, assume all commands are invalid
     strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
 
     char command[MAX_COMMAND_LENGTH];
