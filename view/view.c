@@ -57,3 +57,5 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* 
     // For now, assume all commands are valid
     strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
 }
+
+
