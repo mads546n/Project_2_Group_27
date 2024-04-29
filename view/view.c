@@ -3,10 +3,15 @@
 
 void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
     printf("Yukon Solitaire\n\n");
-
+    // change 29-04 peter - terminal output changed to resemble figure 3 "initial view"
     // Display the columns
-    printf("Columns:\n");
-    printf("C1\tC2\tC3\tC4\tC5\tC6\tC7\n");
+    printf("Columns:\t\t\t\t\t\t\tFoundations:\n");
+    printf("C1\tC2\tC3\tC4\tC5\tC6\tC7");
+    printf("\n\t\t\t\t\t\t\t\t[] F1");
+    printf("\n\t\t\t\t\t\t\t\t[] F2");
+    printf("\n\t\t\t\t\t\t\t\t[] F3");
+    printf("\n\t\t\t\t\t\t\t\t[] F4\n\n");
+
     if (!areColumnsEmpty) {
         for (int i = 0; i < 7; i++) {
             if (columns[i][0].rank != '\0') {
@@ -20,19 +25,12 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message) {
             printf("[]\t");
         }
     }
-    printf("\n\n");
-
-    // Display the foundations as empty
-    printf("Foundations:\n");
-    for (int i = 0; i < 4; i++) {
-        printf("F%d []\n", i + 1);
-    }
-    printf("\n");
 
     // Display message
-    printf("Message: %s\n", message);
+    printf("\n\nMessage: %s\n", message);
 
     // Input prompt
     printf("Input > ");
+
 
 }

@@ -56,6 +56,31 @@ void printList(struct Deck* head){
     }
 }
 
+void hiddenDeck(){
+    int rows = 7;  // Number of rows
+    int cols = 7;  // Number of columns
+
+    printf("\n"); //added for readability on the terminal
+    printf("Columns:\t\t\t\t\t\t\tFoundations:\n");
+    printf("C1\tC2\tC3\tC4\tC5\tC6\tC7");
+    // Loop through each row
+    for (int i = 0; i < rows; i++) {
+        // Loop through each column
+        for (int j = 0; j < cols; j++) {
+            // Print [] followed by a space
+            printf("[] ");
+        }
+        // Move to the next line after each row is printed
+        printf("\n");
+    }
+    printf("[] [] []");
+    // Display message
+    printf("\n\nMessage: %s\n", message);
+    // Input prompt
+    printf("Input > ");
+}
+
+
 void command (const char* chr){
     int i = 1;
     struct Deck* head = NULL;
@@ -72,18 +97,21 @@ void command (const char* chr){
             while (fgets(ch, 105, fp) !=NULL){
                 if(first){
                     strcpy(buffer[0],ch);
-                insertStart(&head, buffer[0]);
-                first=false;
+                    insertStart(&head, buffer[0]);
+                    first=false;
                 } else {
                     strcpy(buffer[i],ch);
                     insertEnd(&head, buffer[i++]);
                 }
             }
         }
+
     }
+
 //    Card columns[7][7];
 //    displayBoard(columns,false,"OK");
 //Prints linked list.
     printList(head);
+    hiddenDeck();
 }
 
