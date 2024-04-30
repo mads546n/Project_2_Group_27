@@ -12,11 +12,11 @@ int main() {
     printDeck(deck);
     printf("\n");
 
-    int x = 26; // Example of split-time
-    Card* shuffleDeck = split(deck, x);
+    //split(deck, 26);
 
-    printf("\nShuffled deck:\n");
-    printDeck(shuffleDeck);
+    Card* shuffledDeck = split(deck, 15);
+    printf("Shuffled Deck:\n");
+    printDeck(shuffledDeck);
     printf("\n");
 
     // Arrays of pointer to the head of each column and foundation

@@ -5,6 +5,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <time.h>
+#include <intrin.h>
 #include "../view/view.h"
 
 // Function to initialize a sample deck
@@ -62,8 +63,68 @@ void printDeck(Card deck[]) {
     printf("\n");
 }
 
-// Function to "split" a deck of cards after "x" amount of cards iterated through and interleave into shuffled deck
-Card* split(Card deck[], int x) {
+// Function to "split" a deck of cards after "split" amount of cards iterated through and interleave into shuffled deck
+Card* split(Card deck[], int split) {
+    // Allocate memory for the new shuffled deck
+    Card* shuffledDeck = (Card*)malloc(52 * sizeof(Card));
+    if (shuffledDeck == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
+    }
+
+    // Create piles dependent on the split and generate a random split-value if none is provided
+    Card* pile1;
+    Card* pile2;
+
+    if (split > 0 && split < 52) {
+        pile1 = deck;
+        pile2 = deck + split;
+    } else {
+        srand(time(NULL)); // Seed the random number generator
+        split = rand() % 52; // Generate a random split
+        pile1 = deck;
+        pile2 = deck + split;
+    }
+
+    printf("Pile1\n");
+    printDeck(pile1);
+    printf("\n");
+
+    printf("Pile2\n");
+    printDeck(pile2);
+    printf("\n");
+
+    // Index variables for iterating through piles a card at a time
+    int index1 = 0;
+    int index2 = 0;
+    int shuffledIndex = 0;
+
+    // Interleave cards from the two piles into the shuffled deck
+    while (index1 < split && index2 < 52 - split) {
+        shuffledDeck[shuffledIndex++] = pile1[index1++];
+        shuffledDeck[shuffledIndex++] = pile2[index2++];
+    }
+
+    // If there are remaining cards in pile1 or pile2, we add them to the shuffled deck
+    while (index1 < split) {
+        shuffledDeck[shuffledIndex++] = pile1[index1++];
+    }
+
+    while (index2 < 52 - split) {
+        shuffledDeck[shuffledIndex++] = pile2[index2++];
+    }
+
+    return shuffledDeck;
+}
+
+// Older iteration of split-function
+/*Card* split(Card deck[], int x) {
+
+    // Assure that x is within valid range
+    if (x <= 1 || x >= 52) {
+        fprintf(stderr, "Invalid value for x. X must be > 1 && > 52\n");
+    }
+
     // Allocate memory for the new deck
     Card* newDeck = (Card*)malloc(52 * sizeof(Card));
     if (newDeck == NULL) {
@@ -71,56 +132,45 @@ Card* split(Card deck[], int x) {
         return NULL;
     }
 
-    // Split the deck
-    Card* pile1 = deck;
-    Card* pile2 = deck + x;
+    // Allocate memory for each pile
+    Card* pile1 = (Card*)malloc((52 * x) * sizeof(Card));
+    if (pile1 == NULL) {
+        fprintf(stderr, "Memory alloc failed");
+        return NULL;
+    }
 
-    //Calculate size of each pile
-    int sizePile1 = x;
-    int sizePile2 = 52 - x;
+    Card* pile2 = (Card*)malloc((52 * x) * sizeof(Card));
+    if (pile2 == NULL) {
+        fprintf(stderr, "Memory alloc failed");
+        return NULL;
+    }
 
-    // Debug prints
-    printf("Pile 1: \n");
+
+    // Load cards into pile1
+    for (int i = 0; i < x; i++) {
+        pile1[i] = deck[i];
+    }
+
+    // Load cards into pile2
+    for (int i = x; i < 52; i++) {
+        pile2[i - x] = deck[i];
+    }
+
+    // Debug statements
+    printf("Pile1\n");
     printDeck(pile1);
     printf("\n");
 
-    printf("Pile 2: \n");
+    printf("Pile2\n");
     printDeck(pile2);
     printf("\n");
 
-    int index = 0;
-    while (sizePile1 > 0 && sizePile2 > 0) {
-        newDeck[index++] = *pile1++;
-        newDeck[index++] = *pile2++;
-        sizePile1--;
-        sizePile2--;
-    }
+    // Initialize shuffled deck
+    Card* shuffledDeck[52];
 
-    // If remaining cards in pile1, add to new "shuffled deck"
-    while (sizePile1 > 0) {
-        newDeck[index++] = *pile1++;
-        sizePile1--;
-    }
+    // Free allocated memory for each pile
+    free(pile1);
+    free(pile2);
 
-    while (sizePile2 > 0) {
-        newDeck[index++] = *pile2++;
-        sizePile2--;
-    }
-
-    return newDeck;
-
-    /*// Shuffle the cards from the two piles and combine into a new shuffled deck
-    srand(time(NULL)); // Randomness definition
-    int index = 0;
-    while (index < 52) {
-        // Interleave cards from the two piles into the shuffled deck
-        if (pile1 < deck + x) {
-            newDeck[index++] = *pile1++;
-        }
-        if (pile2 < deck + 52) {
-            newDeck[index++] = *pile2++;
-        }
-    }
-
-    return newDeck;*/
-}
+    return NULL;
+}*/
