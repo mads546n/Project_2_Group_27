@@ -13,6 +13,6 @@ Card* split(Card Deck[], int x);
 void printDeck(Card deck[]);
 
 
-void command (const char* chr);
+void startDeck ();
 
 #endif //PROJECT_2_MODEL_H

@@ -3,54 +3,54 @@
 #include <string.h>
 #include "view.h"
 
-// Define maximum length for last command and message
+// Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
 
 
-// Define placeholder functions for each command
+// Define placeholder functions for each startDeck
 void processLD(char* argument) {
-    printf("Placeholder function for LD command\n");
+    printf("Placeholder function for LD startDeck\n");
 }
 
 void processSW() {
-    printf("Placeholder function for SW command\n");
+    printf("Placeholder function for SW startDeck\n");
 }
 
 void processSI(char* argument) {
-    printf("Placeholder function for SI command\n");
+    printf("Placeholder function for SI startDeck\n");
 }
 
 void processSR() {
-    printf("Placeholder function for SR command\n");
+    printf("Placeholder function for SR startDeck\n");
 }
 
 void processSD(char* argument) {
-    printf("Placeholder function for SD command\n");
+    printf("Placeholder function for SD startDeck\n");
 }
 
 void processP() {
-    printf("Placeholder function for P command\n");
+    printf("Placeholder function for P startDeck\n");
 }
 
 void processQ() {
-    printf("Placeholder function for Q command\n");
+    printf("Placeholder function for Q startDeck\n");
 }
 
 void processU() {
-    printf("Placeholder function for U command\n");
+    printf("Placeholder function for U startDeck\n");
 }
 
 void processR() {
-    printf("Placeholder function for R command\n");
+    printf("Placeholder function for R startDeck\n");
 }
 
 void processS(char* argument) {
-    printf("Placeholder function for S command\n");
+    printf("Placeholder function for S startDeck\n");
 }
 
 void processL(char* argument) {
-    printf("Placeholder function for L command\n");
+    printf("Placeholder function for L startDeck\n");
 }
 
 void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areColumnsEmpty, char* message, char* lastCommand) {
@@ -88,7 +88,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 height++;
             }
             if (current != NULL) {
-                printf("[%c%c]\t", current->card.rank, current->card.suit);
+                printf("%c%c\t", current->card.rank, current->card.suit);
                 current = current->next;
             } else {
                 printf("\t");
@@ -118,8 +118,8 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
     printf("\n");
 
-    // Display last command
-    printf("LAST command: %s\n", lastCommand);
+    // Display last startDeck
+    printf("LAST startDeck: %s\n", lastCommand);
 
     // Display message
     printf("Message: %s\n", message);
@@ -134,10 +134,10 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     // Remove newline character from input
     input[strcspn(input, "\n")] = 0;
 
-    // Update last command with the input received
+    // Update last startDeck with the input received
     strncpy(lastCommand, input, MAX_COMMAND_LENGTH);
 
-    // Check if command is valid and update message
+    // Check if startDeck is valid and update message
     // For now, assume all commands are invalid
     strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
 
@@ -156,7 +156,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
         strcmp(command, "R") == 0 ||
         strcmp(command, "S") == 0 ||
         strcmp(command, "L") == 0) {
-        // If the input command is valid, update the message
+        // If the input startDeck is valid, update the message
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
 
         switch (command[0]) {

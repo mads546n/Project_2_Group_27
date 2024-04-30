@@ -6,11 +6,7 @@
 typedef struct Card {
     char rank;
     char suit;
-
     struct ListNode* next; // Pointer to the next card in the linked list
-
-    struct Card* next;
-
 } Card;
 
 typedef struct ListNode {
