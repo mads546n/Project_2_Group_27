@@ -30,20 +30,19 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
         }
     }
 
-    int columnSizes[7] = {1, 6, 7, 8, 9, 10, 11};
-
     // Print cards in each column
     for (int row = 0; row < 11; row++) {
         for (int col = 0; col < 7; col++) {
             ListNode* current = columns[col];
             int height = 0;
             // Skip rows until appropriate height is found
-            while (current != NULL && height < row - (11 - columnSizes[col])) {
+            while (current != NULL && height < row) {
                 current = current->next;
                 height++;
             }
             if (current != NULL) {
                 printf("[%c%c]\t", current->card.rank, current->card.suit);
+                current = current->next;
             } else {
                 printf("\t");
             }
