@@ -1,3 +1,4 @@
+
 //
 // Created by edvar on 21-04-2024.
 //
@@ -7,6 +8,12 @@
 #include <time.h>
 #include <intrin.h>
 #include "../view/view.h"
+#include "model.h"
+#include "../controller/controller.h"
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 
 // Function to initialize a sample deck
 void initializeSampleDeck(Card deck[]) {
@@ -44,15 +51,6 @@ void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
         columns[i] = currentColumn;
     }
 
-    // Free the allocated memory when done using it
-    /*for (int i = 0; i < 7; i++) {
-        ListNode* current = columns[i];
-        while (current != NULL) {
-            ListNode* temp = current;
-            current = current->next;
-            free(temp);
-        }
-    }*/
 }
 
 // Helper-function to print the deck
@@ -117,60 +115,88 @@ Card* split(Card deck[], int split) {
     return shuffledDeck;
 }
 
-// Older iteration of split-function
-/*Card* split(Card deck[], int x) {
 
-    // Assure that x is within valid range
-    if (x <= 1 || x >= 52) {
-        fprintf(stderr, "Invalid value for x. X must be > 1 && > 52\n");
+
+
+//Linked list structure.
+struct Deck {
+    char* card;
+    struct Deck* next;
+};
+char buffer[3][51];
+
+void insertStart(struct Deck** head, char* card){
+    //Allocates memory for the linked list using malloc.
+    struct Deck* newNode
+            = (struct Deck*)malloc(sizeof(struct Deck));
+    // store the card in the new Deck
+    newNode->card = card;
+    // the next pointer of new Deck will be on current head
+    newNode->next = *head;
+    // the current head will the new Deck
+    *head = newNode;
+}
+
+void insertEnd(struct Deck** head, char* card){
+    struct Deck* newNode
+            = (struct Deck*)malloc(sizeof(struct Deck));
+//    printf("size of malloc is%llu",sizeof(struct Deck));
+
+    // store the card in the new Deck
+    newNode->card = card;
+    // Since the node will be last its next will be NULL
+    newNode->next = NULL;
+    // in case this is the first node make the newNode as
+    // the head of the LinkedList
+    if (*head == NULL) {
+        *head = newNode;
+        return;
     }
-
-    // Allocate memory for the new deck
-    Card* newDeck = (Card*)malloc(52 * sizeof(Card));
-    if (newDeck == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return NULL;
+    // Create a pointer to iterate till the last node
+    struct Deck* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
     }
-
-    // Allocate memory for each pile
-    Card* pile1 = (Card*)malloc((52 * x) * sizeof(Card));
-    if (pile1 == NULL) {
-        fprintf(stderr, "Memory alloc failed");
-        return NULL;
+    // make the next of the tail to the new Deck
+    current->next = newNode;
+}
+void printList(struct Deck* head){
+    struct Deck* current = head;
+    while (current != NULL) {
+        printf("%s", current->card);
+        current = current->next;
     }
+}
 
-    Card* pile2 = (Card*)malloc((52 * x) * sizeof(Card));
-    if (pile2 == NULL) {
-        fprintf(stderr, "Memory alloc failed");
-        return NULL;
+void command (const char* chr){
+    int i = 1;
+    struct Deck* head = NULL;
+    //Checks for LD command.
+    if (strcmp(chr, "LD") == 0) {
+        //Checks if the LD command has a path name.
+        if (strlen(chr)==2){
+            char *filename = "../model/cards.txt";
+            FILE* fp = fopen(filename, "r");
+            char ch[105];
+
+            // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
+            bool first = true;
+            while (fgets(ch, 105, fp) !=NULL){
+                if(first){
+                    strcpy(buffer[0],ch);
+                insertStart(&head, buffer[0]);
+                first=false;
+                } else {
+                    strcpy(buffer[i],ch);
+                    insertEnd(&head, buffer[i++]);
+                }
+            }
+        }
     }
+//    Card columns[7][7];
+//    displayBoard(columns,false,"OK");
+//Prints linked list.
+    printList(head);
+}
 
 
-    // Load cards into pile1
-    for (int i = 0; i < x; i++) {
-        pile1[i] = deck[i];
-    }
-
-    // Load cards into pile2
-    for (int i = x; i < 52; i++) {
-        pile2[i - x] = deck[i];
-    }
-
-    // Debug statements
-    printf("Pile1\n");
-    printDeck(pile1);
-    printf("\n");
-
-    printf("Pile2\n");
-    printDeck(pile2);
-    printf("\n");
-
-    // Initialize shuffled deck
-    Card* shuffledDeck[52];
-
-    // Free allocated memory for each pile
-    free(pile1);
-    free(pile2);
-
-    return NULL;
-}*/

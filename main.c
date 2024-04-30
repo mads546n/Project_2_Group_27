@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "view/view.h"
 #include "model/model.h"
+#include "controller/controller.h"
 
 int main() {
     // Initialize a deck
@@ -44,6 +45,7 @@ int main() {
 
         // Display the game board
         displayBoard(columns, foundations, isEmpty, message, lastCommand);
+
 
     }
 
