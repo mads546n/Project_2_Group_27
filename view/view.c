@@ -87,6 +87,7 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* 
     printf("Message: %s\n", message);
 
     // Input prompt
+
     printf("Input >  ");
 
     // Handle input
@@ -159,6 +160,7 @@ void displayBoard(Card columns[][7], bool areColumnsEmpty, char* message, char* 
 
         }
     }
+
 }
 
 
