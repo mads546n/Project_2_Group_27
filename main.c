@@ -71,6 +71,7 @@ void load_saved_game(Game* game, char* filename);
 void undo_move(Game* game, MoveHistory* history);
 void redo_move(Game* game, MoveHistory* history);
 void add_to_history(MoveHistory* history, char* move);
+void free_deck(Stack* stack); // New function to free memory allocated for cards
 
 int main() {
     Game game;
@@ -88,6 +89,9 @@ int main() {
 
     // Play the game
     play_game(&game);
+
+    // Free memory allocated for the deck when exiting the program
+    free_deck(&(game.stock));
 
     return 0;
 }
@@ -174,11 +178,7 @@ void load_deck(Game* game, char* filename) {
     }
 
     // Clear the existing stock stack
-    while (game->stock.top != NULL) {
-        Card* temp = game->stock.top;
-        game->stock.top = game->stock.top->next;
-        free(temp);
-    }
+    free_deck(&(game->stock));
 
     // Load a new unshuffled deck
     for (char suit = CLUBS; suit <= SPADES; suit++) {
@@ -262,10 +262,8 @@ bool move_card(Game* game, MoveHistory* history, char* move) {
         return false;
     }
 
-    // Find the source and destination cards
+    // Find the source card
     Card* from_card_ptr = game->tableaus[from_col].top;
-    Card* to_card_ptr = NULL;
-
     while (from_card_ptr != NULL && strcmp(from_card, "") != 0) {
         char current_card[4];
         sprintf(current_card, "%d%c", from_card_ptr->rank, from_card_ptr->suit);
@@ -280,6 +278,8 @@ bool move_card(Game* game, MoveHistory* history, char* move) {
         return false;
     }
 
+    // Find the destination card
+    Card* to_card_ptr = NULL;
     if (game->tableaus[to_col].top != NULL) {
         to_card_ptr = game->tableaus[to_col].top;
         while (to_card_ptr->next != NULL) {
@@ -295,11 +295,22 @@ bool move_card(Game* game, MoveHistory* history, char* move) {
 
     // Move the card
     if (to_card_ptr == NULL) {
+        // Destination column is empty, move the card directly
         game->tableaus[to_col].top = from_card_ptr;
     } else {
+        // Append the card to the end of the destination column
         to_card_ptr->next = from_card_ptr;
     }
-    game->tableaus[from_col].top = from_card_ptr->next;
+    // Update the source column
+    if (from_card_ptr == game->tableaus[from_col].top) {
+        game->tableaus[from_col].top = from_card_ptr->next;
+    } else {
+        Card* prev = game->tableaus[from_col].top;
+        while (prev->next != from_card_ptr) {
+            prev = prev->next;
+        }
+        prev->next = from_card_ptr->next;
+    }
     from_card_ptr->next = NULL;
 
     // Add the move to the history
@@ -403,11 +414,13 @@ void save_deck(Game* game, char* filename) {
 }
 
 void free_deck(Stack* stack) {
-    while (stack->top != NULL) {
-        Card* temp = stack->top;
-        stack->top = stack->top->next;
+    Card* current = stack->top;
+    while (current != NULL) {
+        Card* temp = current;
+        current = current->next;
         free(temp);
     }
+    stack->top = NULL; // Reset the top pointer to NULL after freeing all cards
 }
 
 void load_saved_game(Game* game, char* filename) {
