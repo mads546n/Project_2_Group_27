@@ -123,7 +123,7 @@ void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
     int index = 0;
     for (int i = 0; i < 7; i++) {
         ListNode* currentColumn = NULL;
-        int cardsToAdd = (i == 0) ? 1 : i + 6; // Determine number of cards to be distributed in each column
+        int cardsToAdd = (i == 0) ? 1 : i + 5; // Determine number of cards to be distributed in each column
         for (int j = 0; j < cardsToAdd && index < 52; j++) {
             while (index < 52 && cardAdded[index]) {
                 index++;
