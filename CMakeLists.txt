@@ -1,13 +1,6 @@
-cmake_minimum_required(VERSION 3.28)
-project(Project_2 C)
+cmake_minimum_required(VERSION 3.17)
+project(yukon_solitaire C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(Project_2 main.c
-        controller/controller.c
-        model/model.c
-        view/view.c
-        view/view.h
-        controller/controller.h
-        model/model.h
-)
+add_executable(yukon_solitaire main.c)
