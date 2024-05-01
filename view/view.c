@@ -131,7 +131,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     }
 
     // Print cards in each column
-    for (int row = 0; row < 11; row++) {
+    for (int row = 0; row < maxHeight; row++) {
         for (int col = 0; col < 7; col++) {
             ListNode* current = columns[col];
             int height = 0;
@@ -141,8 +141,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 height++;
             }
             if (current != NULL) {
-                printf("%c%c\t", current->card.rank, current->card.suit);
-                current = current->next;
+                printf("[%c%c]\t", current->card.rank, current->card.suit);
             } else {
                 printf("\t");
             }
