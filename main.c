@@ -9,6 +9,7 @@
 #define MAX_CARDS 52
 #define MAX_COLUMNS 7
 #define MAX_FOUNDATIONS 4
+#define MAX_MOVES 100 // Maximum number of moves to store in history
 
 #define CLUBS 'C'
 #define DIAMONDS 'D'
@@ -39,6 +40,18 @@ typedef struct {
     Stack stock;
 } Game;
 
+typedef struct {
+    char move[10];
+    int from_col;
+    char from_card[4];
+    int to_col;
+} Move;
+
+typedef struct {
+    Move moves[MAX_MOVES];
+    int top;
+} MoveHistory;
+
 // Function prototypes
 void initialize(Game* game);
 void push(Stack* stack, int rank, char suit);
@@ -49,15 +62,25 @@ void load_deck(Game* game, char* filename);
 void shuffle_deck(Game* game);
 void deal_cards(Game* game);
 bool is_valid_move(Card* from, Card* to);
-bool move_card(Game* game, char* move);
+bool move_card(Game* game, MoveHistory* history, char* move);
 void play_game(Game* game);
+void display_deck(Game* game);
+void shuffle_deck_random(Game* game);
+void save_deck(Game* game, char* filename);
+void load_saved_game(Game* game, char* filename);
+void undo_move(Game* game, MoveHistory* history);
+void redo_move(Game* game, MoveHistory* history);
+void add_to_history(MoveHistory* history, char* move);
 
 int main() {
     Game game;
+    MoveHistory history;
+    history.top = -1; // Initialize top of history stack to -1
+
     initialize(&game);
 
     // Load and shuffle the deck
-    load_deck(&game, "deck.txt");
+    load_deck(&game, NULL); // Load a new, unshuffled deck
     shuffle_deck(&game);
 
     // Deal cards to the tableau
@@ -119,7 +142,16 @@ void print_stack(Stack* stack) {
 }
 
 void print_game(Game* game) {
-    printf("Foundations: ");
+    // Print the column headers
+    printf("C1 C2 C3 C4 C5 C6 C7\n");
+
+    // Print the tableaus
+    for (int i = 0; i < MAX_COLUMNS; i++) {
+        print_stack(&(game->tableaus[i]));
+        printf(" ");
+    }
+
+    // Print the foundations
     for (int i = 0; i < MAX_FOUNDATIONS; i++) {
         printf("[");
         if (game->foundations[i].top != NULL) {
@@ -127,67 +159,46 @@ void print_game(Game* game) {
         }
         printf("] ");
     }
+
     printf("\n");
 
-    printf("Tableaus:\n");
-    for (int i = 0; i < MAX_COLUMNS; i++) {
-        printf("Column %d: ", i + 1);
-        print_stack(&(game->tableaus[i]));
-        printf("\n");
+    // Print the last command and message
+    printf("Last Command: \n");
+    printf("Message: \n");
+    printf("Input > ");
+}
+
+void load_deck(Game* game, char* filename) {
+    if (filename != NULL) {
+        printf("Error: Filename parameter not supported. Loading a new deck.\n");
     }
 
-    printf("Stock: ");
+    // Clear the existing stock stack
+    while (game->stock.top != NULL) {
+        Card* temp = game->stock.top;
+        game->stock.top = game->stock.top->next;
+        free(temp);
+    }
+
+    // Load a new unshuffled deck
+    for (char suit = CLUBS; suit <= SPADES; suit++) {
+        for (int rank = 1; rank <= MAX_RANK; rank++) {
+            push(&(game->stock), rank, suit);
+        }
+    }
+
+    printf("New deck loaded.\n");
+}
+
+void display_deck(Game* game) {
+    printf("Current deck order:\n");
     print_stack(&(game->stock));
     printf("\n");
 }
 
-void load_deck(Game* game, char* filename) {
-    FILE* file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Error: Could not open file.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    char rank;
-    char suit;
-    int count = 0;
-    while (fscanf(file, "%c%c\n", &rank, &suit) != EOF) {
-        push(&(game->stock), rank - '0', suit);
-        count++;
-    }
-
-    if (count != MAX_CARDS) {
-        printf("Error: Invalid number of cards in the file.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    fclose(file);
-}
-
 void shuffle_deck(Game* game) {
-    srand(time(NULL));
-
-    // Copy cards to an array for shuffling
-    Card* cards[MAX_CARDS];
-    Card* current = game->stock.top;
-    for (int i = 0; i < MAX_CARDS; i++) {
-        cards[i] = current;
-        current = current->next;
-        cards[i]->next = NULL; // Disconnect from the original stack
-    }
-
-    // Shuffle the array
-    for (int i = MAX_CARDS - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        Card* temp = cards[i];
-        cards[i] = cards[j];
-        cards[j] = temp;
-    }
-
-    // Reconstruct the stack
-    for (int i = 0; i < MAX_CARDS; i++) {
-        push(&(game->stock), cards[i]->rank, cards[i]->suit);
-    }
+    shuffle_deck_random(game); // You can choose either shuffle method
+    // shuffle_deck_interleave(game, -1); // Or this one
 }
 
 void deal_cards(Game* game) {
@@ -217,97 +228,240 @@ bool is_valid_move(Card* from, Card* to) {
         }
         return false;
     }
-    if (from->rank == to->rank - 1 && from->suit % 2 != to->suit % 2) {
-        return true; // Valid move to tableau
+    if (from->rank == to->rank - 1) {
+        if (from->suit == HEARTS || from->suit == DIAMONDS) {
+            if (to->suit == CLUBS || to->suit == SPADES) {
+                return true;
+            }
+        } else if (from->suit == CLUBS || from->suit == SPADES) {
+            if (to->suit == HEARTS || to->suit == DIAMONDS) {
+                return true;
+            }
+        }
     }
     return false;
 }
 
-bool move_card(Game* game, char* move) {
-    int from_col, to_col;
-    char from_card[4], to_card[4];
-
-    if (sscanf(move, "C%d:%3s->C%d", &from_col, from_card, &to_col) != 3) {
-        printf("Error: Invalid move format.\n");
-        return false;
-    }
-
-    from_col--;
+bool move_card(Game* game, MoveHistory* history, char* move) {
+    int from_col;
+    char from_card[4];
+    int to_col;
+    sscanf(move, "%d %3s %d", &from_col, from_card, &to_col);
+    from_col--; // Adjust to zero-based index
     to_col--;
 
+    // Check if the columns are valid
     if (from_col < 0 || from_col >= MAX_COLUMNS || to_col < 0 || to_col >= MAX_COLUMNS) {
-        printf("Error: Invalid column number.\n");
+        printf("Invalid column numbers.\n");
         return false;
     }
 
-    if (from_card[0] == 'A' || from_card[0] == 'T' || from_card[0] == 'J' || from_card[0] == 'Q' || from_card[0] == 'K') {
-        from_card[0] -= '0';
+    // Check if the source column is empty
+    if (game->tableaus[from_col].top == NULL) {
+        printf("Source column is empty.\n");
+        return false;
     }
 
-    if (to_card[0] == 'A' || to_card[0] == 'T' || to_card[0] == 'J' || to_card[0] == 'Q' || to_card[0] == 'K') {
-        to_card[0] -= '0';
+    // Find the source and destination cards
+    Card* from_card_ptr = game->tableaus[from_col].top;
+    Card* to_card_ptr = NULL;
+
+    while (from_card_ptr != NULL && strcmp(from_card, "") != 0) {
+        char current_card[4];
+        sprintf(current_card, "%d%c", from_card_ptr->rank, from_card_ptr->suit);
+        if (strcmp(from_card, current_card) == 0) {
+            break;
+        }
+        from_card_ptr = from_card_ptr->next;
     }
 
-    Card* from;
-    if (from_card[1] == '\0') {
-        from = game->tableaus[from_col].top;
-        if (from == NULL) {
-            printf("Error: No card in the source column.\n");
-            return false;
-        }
-    } else {
-        from = game->tableaus[from_col].top;
-        while (from != NULL && (from->rank != from_card[0] || from->suit != from_card[1])) {
-            from = from->next;
-        }
-        if (from == NULL) {
-            printf("Error: Card not found in the source column.\n");
-            return false;
+    if (from_card_ptr == NULL) {
+        printf("Card not found in source column.\n");
+        return false;
+    }
+
+    if (game->tableaus[to_col].top != NULL) {
+        to_card_ptr = game->tableaus[to_col].top;
+        while (to_card_ptr->next != NULL) {
+            to_card_ptr = to_card_ptr->next;
         }
     }
 
-    Card* to = game->tableaus[to_col].top;
-    if (!is_valid_move(from, to)) {
-        printf("Error: Invalid move.\n");
+    // Check if the move is valid
+    if (!is_valid_move(from_card_ptr, to_card_ptr)) {
+        printf("Invalid move.\n");
         return false;
     }
 
     // Move the card
-    if (from->suit == FOUNDATION) {
-        game->tableaus[to_col].top = from;
-        game->tableaus[from_col].top = from->next;
-        from->next = to;
+    if (to_card_ptr == NULL) {
+        game->tableaus[to_col].top = from_card_ptr;
     } else {
-        Card* current = game->tableaus[from_col].top;
-        while (current->next != from) {
-            current = current->next;
-        }
-        current->next = from->next;
-        from->next = to;
-        game->tableaus[to_col].top = from;
+        to_card_ptr->next = from_card_ptr;
     }
+    game->tableaus[from_col].top = from_card_ptr->next;
+    from_card_ptr->next = NULL;
+
+    // Add the move to the history
+    add_to_history(history, move);
 
     return true;
 }
 
 void play_game(Game* game) {
-    char move[10];
+    MoveHistory history;
+    history.top = -1; // Initialize top of history stack to -1
+    char input[100];
+
     while (true) {
         print_game(game);
-        printf("Input move: ");
-        fgets(move, sizeof(move), stdin);
-        // Remove newline character if present
-        size_t len = strlen(move);
-        if (len > 0 && move[len - 1] == '\n') {
-            move[len - 1] = '\0'; // Remove newline character
-        }
-        if (strcmp(move, "quit") == 0) {
-            printf("Quitting the game.\n");
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = '\0'; // Remove trailing newline character
+
+        if (strcmp(input, "q") == 0 || strcmp(input, "quit") == 0) {
             break;
-        }
-        if (!move_card(game, move)) {
-            printf("Invalid move. Try again.\n");
+        } else if (strcmp(input, "h") == 0 || strcmp(input, "history") == 0) {
+            // Print move history
+            printf("Move history:\n");
+            for (int i = 0; i <= history.top; i++) {
+                printf("%s\n", history.moves[i].move);
+            }
+        } else if (strcmp(input, "u") == 0 || strcmp(input, "undo") == 0) {
+            // Undo last move
+            undo_move(game, &history);
+        } else if (strcmp(input, "r") == 0 || strcmp(input, "redo") == 0) {
+            // Redo last undone move
+            redo_move(game, &history);
+        } else if (strcmp(input, "s") == 0 || strcmp(input, "save") == 0) {
+            // Save current game state
+            char filename[100];
+            printf("Enter filename to save: ");
+            fgets(filename, sizeof(filename), stdin);
+            filename[strcspn(filename, "\n")] = '\0'; // Remove trailing newline character
+            save_deck(game, filename);
+        } else if (strcmp(input, "l") == 0 || strcmp(input, "load") == 0) {
+            // Load saved game state
+            char filename[100];
+            printf("Enter filename to load: ");
+            fgets(filename, sizeof(filename), stdin);
+            filename[strcspn(filename, "\n")] = '\0'; // Remove trailing newline character
+            load_saved_game(game, filename);
+        } else if (strcmp(input, "d") == 0 || strcmp(input, "deck") == 0) {
+            // Display current deck order
+            display_deck(game);
+        } else {
+            // Try to move cards
+            if (!move_card(game, &history, input)) {
+                printf("Invalid command. Please try again.\n");
+            }
         }
     }
 }
 
+void shuffle_deck_random(Game* game) {
+    Card* deck[MAX_CARDS];
+    int count = 0;
+
+    // Store pointers to cards in an array
+    while (game->stock.top != NULL) {
+        deck[count++] = game->stock.top;
+        game->stock.top = game->stock.top->next;
+    }
+
+    // Shuffle the array
+    srand(time(NULL));
+    for (int i = count - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        Card* temp = deck[i];
+        deck[i] = deck[j];
+        deck[j] = temp;
+    }
+
+    // Reassemble the deck
+    for (int i = 0; i < count; i++) {
+        deck[i]->next = game->stock.top;
+        game->stock.top = deck[i];
+    }
+}
+
+void save_deck(Game* game, char* filename) {
+    FILE* fp = fopen(filename, "w");
+    if (fp == NULL) {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    // Save the deck
+    Card* current = game->stock.top;
+    while (current != NULL) {
+        fprintf(fp, "%d %c\n", current->rank, current->suit);
+        current = current->next;
+    }
+
+    fclose(fp);
+    printf("Game saved to %s.\n", filename);
+}
+
+void free_deck(Stack* stack) {
+    while (stack->top != NULL) {
+        Card* temp = stack->top;
+        stack->top = stack->top->next;
+        free(temp);
+    }
+}
+
+void load_saved_game(Game* game, char* filename) {
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL) {
+        printf("Error opening file for reading.\n");
+        return;
+    }
+
+    // Clear the existing stock stack
+    free_deck(&(game->stock));
+
+    // Load the deck
+    int rank;
+    char suit;
+    while (fscanf(fp, "%d %c\n", &rank, &suit) != EOF) {
+        push(&(game->stock), rank, suit);
+    }
+
+    fclose(fp);
+    printf("Game loaded from %s.\n", filename);
+}
+
+void undo_move(Game* game, MoveHistory* history) {
+    if (history->top >= 0) {
+        char* last_move = history->moves[history->top].move;
+        char reverse_move[10];
+        sscanf(last_move, "%d %s %d", &reverse_move[0], reverse_move + 1, &reverse_move[2]);
+        reverse_move[0] = reverse_move[0] + reverse_move[2] - 1;
+        reverse_move[2] = reverse_move[2] + reverse_move[0] - 1;
+        move_card(game, history, reverse_move);
+        history->top--;
+    } else {
+        printf("No moves to undo.\n");
+    }
+}
+
+void redo_move(Game* game, MoveHistory* history) {
+    if (history->top < MAX_MOVES - 1) {
+        history->top++;
+        move_card(game, history, history->moves[history->top].move);
+    } else {
+        printf("No moves to redo.\n");
+    }
+}
+
+void add_to_history(MoveHistory* history, char* move) {
+    if (history->top < MAX_MOVES - 1) {
+        strcpy(history->moves[++history->top].move, move);
+    } else {
+        // Shift all moves up by one to make space for the new move
+        for (int i = 0; i < MAX_MOVES - 1; i++) {
+            strcpy(history->moves[i].move, history->moves[i + 1].move);
+        }
+        strcpy(history->moves[MAX_MOVES - 1].move, move);
+    }
+}
