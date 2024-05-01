@@ -1,18 +1,13 @@
-//
-// Created by Caspe on 22-04-2024.
-//
-#ifndef PROJECT_2_MODEL_H
-#define PROJECT_2_MODEL_H
+// model.h
+#ifndef MODEL_H
+#define MODEL_H
 
+typedef struct Node {
+    char card[3];  // Card representation: "5D", "KH", etc.
+    struct Node* next;
+} Node;
 
-#include "../view/view.h"
+Node* loadDeckFromFile(const char* filename);
+void freeLinkedList(Node* head);
 
-void initializeSampleDeck(Card deck[]);
-void distributeDeckToColumns(Card deck[], ListNode* columns[]);
-Card* split(Card Deck[], int x);
-void printDeck(Card deck[]);
-
-
-void command (const char* chr);
-
-#endif //PROJECT_2_MODEL_H
+#endif
