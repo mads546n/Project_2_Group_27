@@ -1,9 +1,8 @@
-// controller.h
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "model/model.c"
+#include "../model/model.h"
 
-void processCommand(const char* command);
+bool processInput(Card** deck, Card* columns[], char* message);
 
-#endif
+#endif /* CONTROLLER_H */

@@ -1,13 +1,14 @@
-// model.h
 #ifndef MODEL_H
 #define MODEL_H
 
-typedef struct Node {
-    char card[3];  // Card representation: "5D", "KH", etc.
-    struct Node* next;
-} Node;
+#include "../card/card.h"
 
-Node* loadDeckFromFile(const char* filename);
-void freeLinkedList(Node* head);
+void initializeDeck(Card** deck);
+void loadDeck(Card** deck, const char* filename);
+void shuffleDeck(Card** deck);
+void interleaveDeck(Card** deck, int split);
+void displayDeck(Card* deck);
+void startGame(Card** deck, Card* columns[]);
+void freeDeck(Card* deck);
 
-#endif
+#endif /* MODEL_H */

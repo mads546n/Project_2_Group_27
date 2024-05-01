@@ -1,9 +1,8 @@
-// view.h
 #ifndef VIEW_H
 #define VIEW_H
 
-#include "model.h"
+#include "../card/card.h"
 
-void displayMessage(const char* message);
+void displayGameState(Card* columns[], const char* message);
 
-#endif
+#endif /* VIEW_H */

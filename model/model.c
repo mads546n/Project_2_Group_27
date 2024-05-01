@@ -1,38 +1,33 @@
-// model.c
 #include "model.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 
-Node* loadDeckFromFile(const char* filename) {
-    FILE* file = fopen(filename, "r");
-    if (!file) {
-        printf("Error: File does not exist.\n");
-        return NULL;
-    }
-
-    Node *head = NULL, *current = NULL;
-    char buffer[3];
-    while (fscanf(file, "%2s", buffer) == 1) {
-        Node* newCard = (Node*)malloc(sizeof(Node));
-        strcpy(newCard->card, buffer);
-        newCard->next = NULL;
-        if (!head) {
-            head = newCard;
-        } else {
-            current->next = newCard;
-        }
-        current = newCard;
-    }
-    fclose(file);
-    return head;
+void initializeDeck(Card** deck) {
+    // Initialize a standard deck of cards
 }
 
-void freeLinkedList(Node* head) {
-    Node* temp;
-    while (head != NULL) {
-        temp = head;
-        head = head->next;
-        free(temp);
-    }
+void loadDeck(Card** deck, const char* filename) {
+    // Load cards from a file
+}
+
+void shuffleDeck(Card** deck) {
+    // Implement a Fisher-Yates shuffle for the linked list
+}
+
+void interleaveDeck(Card** deck, int split) {
+    // Implement interleaving based on a split index
+}
+
+void displayDeck(Card* deck) {
+    // Print all cards in the deck
+}
+
+void startGame(Card** deck, Card* columns[]) {
+    // Distribute cards into columns to start the game
+}
+
+void freeDeck(Card* deck) {
+    // Free all cards in the deck
 }
