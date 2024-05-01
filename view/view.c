@@ -6,11 +6,62 @@
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
+#define MAX_CARD_LENGTH 3
+#define MAX_FILENAME_LENGTH 100
 
 
 // Define placeholder functions for each startDeck
-void processLD(char* argument) {
-    printf("Placeholder function for LD startDeck\n");
+bool isDuplicate(Card deck[], int size, Card card) {
+    for (int i = 0; i < size; i++) {
+        if (deck[i].rank == card.rank && deck[i].suit == card.suit) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void processLD(char* filename) {
+    // Open the file for reading
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error: Unable to open file '%s'\n", filename);
+        return;
+    }
+
+    // Initialize an array to store the deck
+    Card deck[52];
+    int deckSize = 0;
+
+    // Read cards from the file
+    char cardStr[MAX_CARD_LENGTH];
+    while (fgets(cardStr, MAX_CARD_LENGTH, file) != NULL) {
+        // Extract rank and suit from the string
+        Card card;
+        card.rank = cardStr[0];
+        card.suit = cardStr[1];
+
+        // Check for duplicate cards
+        if (isDuplicate(deck, deckSize, card)) {
+            printf("Error: Duplicate card found in the deck\n");
+            fclose(file);
+            return;
+        }
+
+        // Add the card to the deck
+        deck[deckSize++] = card;
+    }
+
+    // Close the file
+    fclose(file);
+
+    // Check if the deck has exactly 52 cards
+    if (deckSize != 52) {
+        printf("Error: The deck must contain exactly 52 cards\n");
+        return;
+    }
+
+    // Now you have a valid deck stored in the 'deck' array
+    // You can proceed to store it in linked lists or use it as needed
 }
 
 void processSW() {
@@ -52,6 +103,8 @@ void processS(char* argument) {
 void processL(char* argument) {
     printf("Placeholder function for L startDeck\n");
 }
+
+
 
 void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areColumnsEmpty, char* message, char* lastCommand) {
 
