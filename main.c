@@ -42,26 +42,12 @@ int main() {
     }
 
     while (1) {
-        int increment = 0;
-        int stop = true;
-//    while (1) {
-//
-//        // Display the game board
-//        displayBoard(columns, isEmpty, message, lastCommand);
-//
-//    }
-        while (stop) {
 
-            // Display the game board
-            displayBoard(columns, foundations, isEmpty, message, lastCommand);
-            increment++;
-            if (increment == 2) { stop = false; }
+        // Display the game board
+        displayBoard(columns, foundations, isEmpty, message, lastCommand);
 
-
-        }
-
-        return 0;
-
-
+        //Important
+        *columns = NULL;
     }
+
 }

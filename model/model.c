@@ -116,14 +116,16 @@ void initializeSampleDeck(Card deck[]) {
     printf("\n");
 }
 
+
 // Function to distribute a given card deck along the columns
 void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
     int index = 0;
+    ListNode* newNode = NULL;
     for (int i = 0; i < 7; i++) {
         ListNode* currentColumn = NULL;
         for (int j = 0; j <= i; j++) {
             if (index < 52) { // Avoid accessing cards which are out of bounds
-                ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
+                newNode = (ListNode*)malloc(sizeof(ListNode));
 
                 if (newNode == NULL) {
                     fprintf(stderr,"Memory allocation failed\n");
@@ -136,7 +138,7 @@ void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
         }
         columns[i] = currentColumn;
     }
-
+    free(newNode);
 }
 
 // Helper-function to print the deck
