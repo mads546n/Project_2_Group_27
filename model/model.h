@@ -11,6 +11,7 @@ void initializeSampleDeck(Card deck[]);
 void distributeDeckToColumns(Card deck[], ListNode* columns[]);
 Card* split(Card Deck[], int x);
 void printDeck(Card deck[]);
+void shuffleDeck(Card deck[]);
 
 
 void startDeck ();

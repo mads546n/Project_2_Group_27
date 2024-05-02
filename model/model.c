@@ -211,6 +211,41 @@ Card* split(Card deck[], int split) {
     return shuffledDeck;
 }
 
+// Function to shuffle a deck using the Fisher-Yates shuffling-algorithm
+void shuffleDeck(Card deck[]) {
+    //Initialize an int value to keep track of the number of cards in the deck
+    int numCards = 50;
+
+    // Initialize the shuffled deck
+    Card shuffledDeck[numCards];
+
+    // Initialize a random seed
+    srand(time(NULL));
+
+    // Integer to store the size of the unshuffled pile
+    int unshuffledSize = numCards;
+
+    // Loop to iterate through cards
+    for (int i = 0; i < numCards; i++) {
+        // Select a random index in the unshuffled pile
+        int randomIndex = rand() % unshuffledSize;
+
+        // The random index is attributed to a random card and moved to the shuffled deck
+        shuffledDeck[i] = deck[randomIndex];
+
+        // The selected card is then replaced with top card from the unshuffled pile
+        deck[randomIndex] = deck[unshuffledSize - 1];
+
+        // Decrement size of unshuffled pile
+        unshuffledSize--;
+    }
+
+    // Update our deck to match the shuffled deck
+    for (int i = 0; i < numCards; i++) {
+        deck[i] = shuffledDeck[i];
+    }
+}
+
 
 
 
