@@ -1,27 +1,11 @@
+#ifndef VIEW_H
+#define VIEW_H
+
 #include "../model/model.h"
 #include <malloc.h>
 #include <stdio.h>
 
-void insertStart(Deck** head, char* card) {
-    Deck* newNode = (Deck*)malloc(sizeof(Deck));
-    newNode->card = card;
-    newNode->next = *head;
-    *head = newNode;
-}
+void printDeck(Card* deck);
+void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool isEmpty, char message[], char lastCommand[]);
 
-void insertEnd(Deck** head, char* card) {
-    Deck* newNode = (Deck*)malloc(sizeof(Deck));
-    newNode->card = card;
-    newNode->next = NULL;
-    if (*head == NULL) {
-        *head = newNode;
-    } else {
-        Deck* current = *head;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = newNode;
-    }
-}
-
-void printDeck(Deck* deck);
+#endif //VIEW_H

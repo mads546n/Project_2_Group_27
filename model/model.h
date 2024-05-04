@@ -26,5 +26,6 @@ typedef struct FoundationNode {
 void insertStart(Deck** head, char* card);
 void insertEnd(Deck** head, char* card);
 void initializeSampleDeck(Card deck[]);
+void shuffleDeck(Card deck[]);
 
 #endif //MODEL_H

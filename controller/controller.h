@@ -5,5 +5,6 @@
 
 void setPhasePlay(bool isPlayPhase);
 void input();
+void distributeDeckToColumns();
 
 #endif //CONTROLLER_H
