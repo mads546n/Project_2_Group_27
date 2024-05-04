@@ -1,21 +1,19 @@
 #include "controller.h"
-#include "../view/view.h"
-#include "../model/model.h"
-#include <stdio.h>
+#include "view.h"
+#include <string.h>
+#include <stdlib.h>
 
-bool playPhase = false;
-
-void setPhasePlay(bool isPlayPhase) {
-    playPhase = isPlayPhase;
-    if (playPhase) {
-        printf("Play phase has started.\n");
+// Function to process user commands
+void handle_command(const char* command, CardList* deck) {
+    if (strcmp(command, "shuffle") == 0) {
+        shuffle_deck(deck);
+        display_message("Deck shuffled.");
+    } else if (strncmp(command, "load ", 5) == 0) {
+        const char* filename = command + 5;
+        load_deck_from_file(deck, filename);
+        display_message("Deck loaded from file.");
     } else {
-        printf("Back to STARTUP phase.\n");
+        display_message("Invalid command.");
     }
-}
-
-void input() {
-    char chr[256];
-    scanf("%s", chr);
-    // Additional logic based on input to interact with model and view
+    display_deck(deck);
 }

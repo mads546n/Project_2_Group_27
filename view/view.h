@@ -2,10 +2,10 @@
 #define VIEW_H
 
 #include "../model/model.h"
-#include <malloc.h>
-#include <stdio.h>
 
-void printDeck(Card* deck);
-void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool isEmpty, char message[], char lastCommand[]);
+
+// Function prototypes for the view
+void display_deck(const CardList* deck);
+void display_message(const char* message);
 
 #endif //VIEW_H

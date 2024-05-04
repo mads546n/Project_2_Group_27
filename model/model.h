@@ -1,31 +1,22 @@
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef CARD_H
+#define CARD_H
 
-#include <stdbool.h>
-
-typedef struct Deck {
-    char* card;
-    struct Deck* next;
-} Deck;
+#include <stdlib.h>
 
 typedef struct Card {
-    char rank;
-    char suit;
+    char rank;  // 'A', '2'-'9', 'T', 'J', 'Q', 'K'
+    char suit;  // 'C', 'D', 'H', 'S'
+    struct Card* next;
 } Card;
 
-typedef struct ListNode {
-    Card card;
-    struct ListNode* next;
-} ListNode;
+typedef struct {
+    Card* head;
+    int size;
+} CardList;
 
-typedef struct FoundationNode {
-    Card card;
-    struct FoundationNode* next;
-} FoundationNode;
+void init_deck(CardList* deck);
+void load_deck_from_file(CardList* deck, const char* filename);
+void shuffle_deck(CardList* deck);
+void free_deck(CardList* deck);
 
-void insertStart(Deck** head, char* card);
-void insertEnd(Deck** head, char* card);
-void initializeSampleDeck(Card deck[]);
-void shuffleDeck(Card deck[]);
-
-#endif //MODEL_H
+#endif //CARD_H
