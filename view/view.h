@@ -1,4 +1,4 @@
-#include "model/model.h"
+#include "../model/model.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -23,3 +23,5 @@ void insertEnd(Deck** head, char* card) {
         current->next = newNode;
     }
 }
+
+void printDeck(Deck* deck);

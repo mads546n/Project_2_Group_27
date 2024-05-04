@@ -55,7 +55,7 @@ void printList(struct Deck* head){
 //}
 
 
-// Function to initialize a sample deck
+
 void initializeSampleDeck(Card deck[]) {
 
     int i = 1;

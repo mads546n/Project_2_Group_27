@@ -1,6 +1,6 @@
 #include "controller.h"
-#include "view.h"
-#include "model.h"
+#include "../view/view.h"
+#include "../model/model.h"
 #include <stdio.h>
 
 bool playPhase = false;

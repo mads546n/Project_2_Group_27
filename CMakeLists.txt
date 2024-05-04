@@ -3,11 +3,17 @@ project(Project_2 C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(Project_2 main.c
+# Specify the executable and all the source files it depends on
+add_executable(Project_2
+        main.c
         controller/controller.c
         model/model.c
         view/view.c
-        view/view.h
-        controller/controller.h
-        model/model.h
+)
+
+# Set include directories to allow all source files to include headers correctly
+include_directories(
+        ${PROJECT_SOURCE_DIR}/model
+        ${PROJECT_SOURCE_DIR}/controller
+        ${PROJECT_SOURCE_DIR}/view
 )
