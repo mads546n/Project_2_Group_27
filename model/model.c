@@ -1,6 +1,9 @@
 #include "model.h"
 #include <malloc.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <time.h>
 
 void insertStart(Deck** head, char* card) {
     Deck* newNode = (Deck*)malloc(sizeof(Deck));
@@ -32,27 +35,28 @@ void printList(struct Deck* head){
     }
 }
 
-//void startDeck (){
-//    int i = 1;
-//    struct Deck* head = NULL;
-//    //Checks for LD startDeck.
-//    //Checks if the LD startDeck has a path name.
-//    char *filename = "../model/cards.txt";
-//    FILE *fp = fopen(filename, "r");
-//    char ch[105];
-//    // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
-//    bool first = true;
-//    while (fgets(ch, 105, fp) != NULL) {
-//        if (first) {
-//            strcpy(buffer[0], ch);
-//            insertStart(&head, buffer[0]);
-//            first = false;
-//        } else {
-//            strcpy(buffer[i], ch);
-//            insertEnd(&head, buffer[i++]);
-//        }
-//    }
-//}
+void startDeck (){
+    int i = 1;
+    struct Deck* head = NULL;
+    char buffer[52][105];
+    //Checks for LD startDeck.
+    //Checks if the LD startDeck has a path name.
+    char *filename = "../model/cards.txt";
+    FILE *fp = fopen(filename, "r");
+    char ch[105];
+    // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
+    bool first = true;
+    while (fgets(ch, 105, fp) != NULL) {
+        if (first) {
+            strcpy(buffer[0], ch);
+            insertStart(&head, buffer[0]);
+            first = false;
+        } else {
+            strcpy(buffer[i], ch);
+            insertEnd(&head, buffer[i++]);
+        }
+    }
+}
 
 
 
@@ -65,6 +69,7 @@ void initializeSampleDeck(Card deck[]) {
     char *filename = "../model/cards.txt";
     FILE *fp = fopen(filename, "r");
     char ch[105];
+    char buffer[52][105];
     // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
     bool first = true;
     while (fgets(ch, 105, fp) != NULL) {
