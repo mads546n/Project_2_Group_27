@@ -1,29 +1,25 @@
-#ifndef VIEW_H
-#define VIEW_H
+#include "model/model.h"
+#include <malloc.h>
+#include <stdio.h>
 
-#include <stdbool.h>
+void insertStart(Deck** head, char* card) {
+    Deck* newNode = (Deck*)malloc(sizeof(Deck));
+    newNode->card = card;
+    newNode->next = *head;
+    *head = newNode;
+}
 
-#define MAX_COMMAND_LENGTH 100
-#define MAX_MESSAGE_LENGTH 100
-
-extern char message[MAX_MESSAGE_LENGTH]; //Store message for display
-
-typedef struct Card {
-    char rank;
-    char suit;
-    struct ListNode* next; // Pointer to the next card in the linked list
-} Card;
-
-typedef struct ListNode {
-    Card card;
-    struct ListNode* next;
-} ListNode;
-
-typedef struct FoundationNode {
-    Card card;
-    struct FoundationNode* next;
-} FoundationNode;
-
-void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areColumnsEmpty, char* message, char* lastCommand);
-
-#endif /* VIEW_H */
+void insertEnd(Deck** head, char* card) {
+    Deck* newNode = (Deck*)malloc(sizeof(Deck));
+    newNode->card = card;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Deck* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}

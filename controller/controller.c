@@ -1,7 +1,7 @@
 #include "controller.h"
+#include "view.h"
+#include "model.h"
 #include <stdio.h>
-#include <string.h>
-#include "../model/model.h"
 
 bool playPhase = false;
 
@@ -14,18 +14,8 @@ void setPhasePlay(bool isPlayPhase) {
     }
 }
 
-
-
-void input(){
+void input() {
     char chr[256];
     scanf("%s", chr);
-//    printf ("Length is: %zu \n",strlen(chr));
-//    startDeck(chr);
-
-
-
-
-
-
-
+    // Additional logic based on input to interact with model and view
 }

@@ -1,19 +1,14 @@
-//
-// Created by Caspe on 22-04-2024.
-//
-#ifndef PROJECT_2_MODEL_H
-#define PROJECT_2_MODEL_H
+#ifndef MODEL_H
+#define MODEL_H
 
+#include <stdbool.h>
 
-#include "../view/view.h"
+typedef struct Deck {
+    char* card;
+    struct Deck* next;
+} Deck;
 
-void initializeSampleDeck(Card deck[]);
-void distributeDeckToColumns(Card deck[], ListNode* columns[]);
-Card* split(Card Deck[], int x);
-void printDeck(Card deck[]);
-void shuffleDeck(Card deck[]);
+void insertStart(Deck** head, char* card);
+void insertEnd(Deck** head, char* card);
 
-
-void startDeck ();
-
-#endif //PROJECT_2_MODEL_H
+#endif //MODEL_H

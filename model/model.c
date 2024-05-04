@@ -1,60 +1,29 @@
-
-//
-// Created by edvar on 21-04-2024.
-//
-
+#include "model.h"
 #include <malloc.h>
 #include <stdio.h>
-#include <time.h>
-#include <intrin.h>
-#include "../view/view.h"
-#include "model.h"
-#include "../controller/controller.h"
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-//Linked list structure.
-struct Deck {
-    char* card;
-    struct Deck* next;
-};
-char buffer[3][51];
 
-void insertStart(struct Deck** head, char* card){
-    //Allocates memory for the linked list using malloc.
-    struct Deck* newNode
-            = (struct Deck*)malloc(sizeof(struct Deck));
-    // store the card in the new Deck
+void insertStart(Deck** head, char* card) {
+    Deck* newNode = (Deck*)malloc(sizeof(Deck));
     newNode->card = card;
-    // the next pointer of new Deck will be on current head
     newNode->next = *head;
-    // the current head will the new Deck
     *head = newNode;
 }
 
-void insertEnd(struct Deck** head, char* card){
-    struct Deck* newNode
-            = (struct Deck*)malloc(sizeof(struct Deck));
-//    printf("size of malloc is%llu",sizeof(struct Deck));
-
-    // store the card in the new Deck
+void insertEnd(Deck** head, char* card) {
+    Deck* newNode = (Deck*)malloc(sizeof(Deck));
     newNode->card = card;
-    // Since the node will be last its next will be NULL
     newNode->next = NULL;
-    // in case this is the first node make the newNode as
-    // the head of the LinkedList
     if (*head == NULL) {
         *head = newNode;
-        return;
+    } else {
+        Deck* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
     }
-    // Create a pointer to iterate till the last node
-    struct Deck* current = *head;
-    while (current->next != NULL) {
-        current = current->next;
-    }
-    // make the next of the tail to the new Deck
-    current->next = newNode;
 }
+
 void printList(struct Deck* head){
     struct Deck* current = head;
     while (current != NULL) {

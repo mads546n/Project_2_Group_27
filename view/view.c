@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "view.h"
+#include "../model/model.h"
 #include "../controller/controller.h"
 
 // Define maximum length for last startDeck and message
@@ -24,6 +25,17 @@ bool isDuplicate(Card deck[], int size, Card card) {
     }
     return false;
 }
+
+
+void printList(Deck* head) {
+    Deck* current = head;
+    while (current != NULL) {
+        printf("%s ", current->card);
+        current = current->next;
+    }
+    printf("\n");
+}
+
 
 void processLD(char* filename) {
     if (playPhase) {
