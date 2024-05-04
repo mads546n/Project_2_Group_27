@@ -114,11 +114,11 @@ void processSD(char* argument) {
 }
 
 void processP() {
-    if (playPhase) {
-        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+    if (!playPhase) {
+        bool isPlayPhase = true;
         return;
     } else {
-        printf("Placeholder function for P startDeck\n");
+        printf("Already in play phase\n");
     }
 }
 
