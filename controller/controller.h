@@ -3,5 +3,12 @@
 //
 #ifndef PROJECT_2_CONTROLLER_H
 #define PROJECT_2_CONTROLLER_H
-void input();
+
+#include <stdbool.h>
+
+extern bool playPhase;
+
+void setPhasePlay(bool isPlayPhase);
+
+
 #endif //PROJECT_2_CONTROLLER_H

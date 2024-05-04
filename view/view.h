@@ -3,6 +3,11 @@
 
 #include <stdbool.h>
 
+#define MAX_COMMAND_LENGTH 100
+#define MAX_MESSAGE_LENGTH 100
+
+extern char message[MAX_MESSAGE_LENGTH]; //Store message for display
+
 typedef struct Card {
     char rank;
     char suit;

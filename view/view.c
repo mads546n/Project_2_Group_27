@@ -2,12 +2,17 @@
 #include <stdbool.h>
 #include <string.h>
 #include "view.h"
+#include "../controller/controller.h"
 
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
 #define MAX_CARD_LENGTH 3
 #define MAX_FILENAME_LENGTH 100
+
+
+char message[MAX_MESSAGE_LENGTH]; // Store message for display
+
 
 
 // Define placeholder functions for each startDeck
@@ -21,87 +26,143 @@ bool isDuplicate(Card deck[], int size, Card card) {
 }
 
 void processLD(char* filename) {
-    // Open the file for reading
-    FILE* file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Error: Unable to open file '%s'\n", filename);
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot load deck during play phase");
         return;
-    }
-
-    // Initialize an array to store the deck
-    Card deck[52];
-    int deckSize = 0;
-
-    // Read cards from the file
-    char cardStr[MAX_CARD_LENGTH];
-    while (fgets(cardStr, MAX_CARD_LENGTH, file) != NULL) {
-        // Extract rank and suit from the string
-        Card card;
-        card.rank = cardStr[0];
-        card.suit = cardStr[1];
-
-        // Check for duplicate cards
-        if (isDuplicate(deck, deckSize, card)) {
-            printf("Error: Duplicate card found in the deck\n");
-            fclose(file);
+    } else {
+        // Open the file for reading
+        FILE* file = fopen(filename, "r");
+        if (file == NULL) {
+            printf("Error: Unable to open file '%s'\n", filename);
             return;
         }
 
-        // Add the card to the deck
-        deck[deckSize++] = card;
+        // Initialize an array to store the deck
+        Card deck[52];
+        int deckSize = 0;
+
+        // Read cards from the file
+        char cardStr[MAX_CARD_LENGTH];
+        while (fgets(cardStr, MAX_CARD_LENGTH, file) != NULL) {
+            // Extract rank and suit from the string
+            Card card;
+            card.rank = cardStr[0];
+            card.suit = cardStr[1];
+
+            // Check for duplicate cards
+            if (isDuplicate(deck, deckSize, card)) {
+                printf("Error: Duplicate card found in the deck\n");
+                fclose(file);
+                return;
+            }
+
+            // Add the card to the deck
+            deck[deckSize++] = card;
+        }
+
+        // Close the file
+        fclose(file);
+
+        // Check if the deck has exactly 52 cards
+        if (deckSize != 52) {
+            printf("Error: The deck must contain exactly 52 cards\n");
+            return;
+        }
+
+        // Now you have a valid deck stored in the 'deck' array
+        // You can proceed to store it in linked lists or use it as needed
     }
 
-    // Close the file
-    fclose(file);
 
-    // Check if the deck has exactly 52 cards
-    if (deckSize != 52) {
-        printf("Error: The deck must contain exactly 52 cards\n");
-        return;
-    }
-
-    // Now you have a valid deck stored in the 'deck' array
-    // You can proceed to store it in linked lists or use it as needed
 }
 
 void processSW() {
-    printf("Placeholder function for SW startDeck\n");
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for SW startDeck\n");
+    }
 }
 
+
 void processSI(char* argument) {
-    printf("Placeholder function for SI startDeck\n");
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for SI startDeck\n");
+    }
 }
 
 void processSR() {
-    printf("Placeholder function for SR startDeck\n");
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for SR startDeck\n");
+    }
 }
 
 void processSD(char* argument) {
-    printf("Placeholder function for SD startDeck\n");
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for SD startDeck\n");
+    }
 }
 
 void processP() {
-    printf("Placeholder function for P startDeck\n");
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for P startDeck\n");
+    }
 }
 
 void processQ() {
-    printf("Placeholder function for Q startDeck\n");
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for Q startDeck\n");
+    }
 }
 
 void processU() {
-    printf("Placeholder function for U startDeck\n");
+
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for U startDeck\n");
+    }
 }
 
 void processR() {
-    printf("Placeholder function for R startDeck\n");
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for R startDeck\n");
+    }
 }
+
 
 void processS(char* argument) {
     printf("Placeholder function for S startDeck\n");
 }
 
 void processL(char* argument) {
-    printf("Placeholder function for L startDeck\n");
+
+    if (playPhase) {
+        snprintf(message, MAX_MESSAGE_LENGTH, "Error: Cannot shuffle deck during play phase");
+        return;
+    } else {
+        printf("Placeholder function for L startDeck\n");
+    }
 }
 
 
