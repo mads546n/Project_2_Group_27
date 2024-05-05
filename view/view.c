@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include "view.h"
+#include "../model/model.h"
+
 
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
@@ -21,6 +23,12 @@ bool isDuplicate(Card deck[], int size, Card card) {
 }
 
 void processLD(char* filename) {
+
+//Card deck[52];
+    ListNode *columns[7] = {NULL};
+//
+//    initializeSampleDeck(deck,filename, columns);
+//    printf("AAA\n");
     // Open the file for reading
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
@@ -59,10 +67,16 @@ void processLD(char* filename) {
         printf("Error: The deck must contain exactly 52 cards\n");
         return;
     }
+    distributeDeckToColumns(deck, columns);
 
-    // Now you have a valid deck stored in the 'deck' array
-    // You can proceed to store it in linked lists or use it as needed
+
+//     Now you have a valid deck stored in the 'deck' array
+//     You can proceed to store it in linked lists or use it as needed
+
 }
+
+
+
 
 void processSW() {
     printf("Placeholder function for SW startDeck\n");
@@ -213,7 +227,9 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
         switch (command[0]) {
             case 'L':
-                processL(argument);
+                if (command[1] == 'D')
+                    processLD(argument);
+                else processL(argument);
                 break;
             case 'S':
                 processS(argument);
@@ -229,12 +245,6 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 break;
             case 'P':
                 processP();
-                break;
-            case 'D':
-                if (command[1] == 'L')
-                    processLD(argument);
-                else if (command[1] == 'D')
-                    processSD(argument);
                 break;
             case 'I':
                 if (command[1] == 'I')

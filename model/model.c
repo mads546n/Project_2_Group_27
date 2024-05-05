@@ -87,13 +87,13 @@ void printList(struct Deck* head){
 
 
 // Function to initialize a sample deck
-void initializeSampleDeck(Card deck[]) {
+void initializeSampleDeck(Card deck[], char* filename, ListNode* columns[]) {
 
     int i = 1;
     struct Deck* head = NULL;
     //Checks for LD startDeck.
     //Checks if the LD startDeck has a path name.
-    char *filename = "../model/cards.txt";
+//    char *filename = "../model/cards.txt";
     FILE *fp = fopen(filename, "r");
     char ch[105];
     // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
@@ -113,7 +113,71 @@ void initializeSampleDeck(Card deck[]) {
 
         }
     }
+    fclose(fp);
+
     printf("\n");
+    first = false;
+
+    distributeDeckToColumns(deck, columns);
+    bool cardAdded[52] = { false };
+    int index = 0;
+    for (int i = 0; i < 7; i++) {
+        ListNode* currentColumn = NULL;
+        int cardsToAdd = (i == 0) ? 1 : i + 5; // Determine number of cards to be distributed in each column
+        for (int j = 0; j < cardsToAdd && index < 52; j++) {
+            while (index < 52 && cardAdded[index]) {
+                index++;
+            }
+            if (index < 52) {
+                ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
+                if (newNode == NULL) {
+                    fprintf(stderr,"Memory allocation failed\n");
+                    while (currentColumn != NULL) {
+                        ListNode* temp = currentColumn;
+                        currentColumn = currentColumn->next;
+                        free(temp);
+                    }
+                    return;
+                }
+                newNode->card = deck[index];
+                newNode->next = currentColumn;
+                currentColumn = newNode;
+                cardAdded[index] = true;
+            }
+        }
+        columns[i] = currentColumn;
+    }
+}
+
+void load(Card deck[], char* argument) {
+//
+//    int i = 1;
+//    struct Deck* head = NULL;
+//    //Checks for LD startDeck.
+//    //Checks if the LD startDeck has a path name.
+//    char *file;
+//    strcpy ( file,argument)
+//    char *filename = "../model/%s",file;
+//    FILE *fp = fopen(filename, "r");
+//    char ch[105];
+//    // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
+//    bool first = true;
+//    while (fgets(ch, 105, fp) != NULL) {
+//        if (first) {
+//            strcpy(buffer[0], ch);
+//            insertStart(&head, buffer[0]);
+//            deck[0].suit = buffer[0][1];
+//            deck[0].rank = buffer[0][0];
+//            first = false;
+//        } else {
+//            strcpy(buffer[i], ch);
+//            deck[i].suit = buffer[i][1];
+//            deck[i].rank = buffer[i][0];
+//            insertEnd(&head, buffer[i++]);
+//
+//        }
+//    }
+//    printf("\n");
 }
 
 

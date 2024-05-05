@@ -6,11 +6,11 @@
 int main() {
     // Initialize a deck
     Card deck[52];
-    initializeSampleDeck(deck);
+
 
     // Printing sample deck
     printf("Original deck:\n");
-    printDeck(deck);
+//    printDeck(deck);
     printf("\n");
 
     // Arrays of pointer to the head of each column and foundation
@@ -22,8 +22,9 @@ int main() {
     char lastCommand[50] = "";
 
     bool isEmpty = true; // Flag to indicate if the game board is empty
-
-    distributeDeckToColumns(deck, columns);
+    initializeSampleDeck(deck, "../model/cards.txt", columns);
+//    distributeDeckToColumns(deck, columns);
+//    distributeDeckToColumns(deck, columns);
 
     printf("Shuffled deck: \n");
     shuffleDeck(deck);
@@ -34,8 +35,8 @@ int main() {
     printf("\n");
 
     while (1) {
-
         // Display the game board
+//        distributeDeckToColumns(deck, columns);
         displayBoard(columns, foundations, isEmpty, message, lastCommand);
 
         //Important

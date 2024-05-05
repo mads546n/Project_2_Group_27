@@ -7,7 +7,7 @@
 
 #include "../view/view.h"
 
-void initializeSampleDeck(Card deck[]);
+void initializeSampleDeck(Card deck[], char* filename, ListNode* columns[]);
 void distributeDeckToColumns(Card deck[], ListNode* columns[]);
 Card* split(Card Deck[], int x);
 void printDeck(Card deck[]);
