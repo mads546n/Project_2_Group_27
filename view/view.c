@@ -9,7 +9,7 @@
 #define MAX_CARD_LENGTH 3
 #define MAX_FILENAME_LENGTH 100
 
-
+bool playPhase = false;
 // Define placeholder functions for each startDeck
 bool isDuplicate(Card deck[], int size, Card card) {
     for (int i = 0; i < size; i++) {
@@ -103,7 +103,6 @@ void processS(char* argument) {
 void processL(char* argument) {
     printf("Placeholder function for L startDeck\n");
 }
-
 
 
 void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areColumnsEmpty, char* message, char* lastCommand) {
@@ -207,12 +206,17 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
         strcmp(command, "U") == 0 ||
         strcmp(command, "R") == 0 ||
         strcmp(command, "S") == 0 ||
-        strcmp(command, "L") == 0) {
+        strcmp(command, "L") == 0 || strcmp(command, "QQ") == 0) {
         // If the input startDeck is valid, update the message
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
 
         switch (command[0]) {
             case 'L':
+                if (command[1] == 'D') {
+                    processLD(argument);
+                } else  {
+
+                }
                 processL(argument);
                 break;
             case 'S':
@@ -228,7 +232,11 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 processQ();
                 break;
             case 'P':
-                processP();
+                if (!playPhase) {
+                    playPhase = true;
+                } else {
+                    printf("Came already started.\n");
+                };
                 break;
             case 'D':
                 if (command[1] == 'L')

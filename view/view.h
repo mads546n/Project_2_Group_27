@@ -21,4 +21,6 @@ typedef struct FoundationNode {
 
 void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areColumnsEmpty, char* message, char* lastCommand);
 
+bool playPhase;
+
 #endif /* VIEW_H */

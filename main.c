@@ -2,44 +2,32 @@
 #include "view/view.h"
 #include "model/model.h"
 #include "controller/controller.h"
+#include <stdbool.h>
+#include <string.h>
+
 
 int main() {
-    // Initialize a deck
     Card deck[52];
-    initializeSampleDeck(deck);
-
-    // Printing sample deck
-    printf("Original deck:\n");
-    printDeck(deck);
-    printf("\n");
-
-    // Arrays of pointer to the head of each column and foundation
     ListNode *columns[7] = {NULL};
     FoundationNode *foundations[4] = {NULL};
-
     char message[50] = "";
-
     char lastCommand[50] = "";
+    bool gameStarted = false;
 
-    bool isEmpty = true; // Flag to indicate if the game board is empty
+    initializeSampleDeck(deck);  // Consider this part of the LD command in startup phase
 
-    distributeDeckToColumns(deck, columns);
-
-    printf("Shuffled deck: \n");
-    shuffleDeck(deck);
-    for (int i = 0; i < 52; i++) {
-        printf("[%c%c] ", deck[i].rank, deck[i].suit);
-    }
-    printf("\n");
-    printf("\n");
-
+    char command[50];
     while (1) {
+        displayBoard(columns, foundations, gameStarted, message, lastCommand);
 
-        // Display the game board
-        displayBoard(columns, foundations, isEmpty, message, lastCommand);
+        printf("Input > ");
+        fgets(command, sizeof(command), stdin); // Read user command
+        processCommand(command, &gameStarted, deck, columns, foundations, message);
 
-        //Important
-        *columns = NULL;
+        if (strncmp(command, "QQ", 2) == 0) {
+            break; // Exit the loop and end the program
+        }
     }
 
+    return 0;
 }
