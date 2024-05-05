@@ -261,6 +261,111 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
 }
 
+bool validate_move(const Card* from_card, const Card* to_card, char* message) {
+    if (!from_card) {
+        strcpy(message, "Card not found in source column.");
+        return false;
+    }
+    if (to_card == NULL) return true;  // Allow moves to empty columns
+    // Yukon rule: must be opposite color and one rank lower
+    if ((from_card->suit == 'H' || from_card->suit == 'D') != (to_card->suit == 'H' || to_card->suit == 'D') &&
+        from_card->rank == to_card->rank - 1) {
+        return true;
+    }
+    strcpy(message, "Invalid move.");
+    return false;
+}
+
+
+Card* find_card_in_stack(Stack* stack, const char* card_desc, char* message) {
+    Card* current = stack->top;
+    int rank;
+    char suit;
+    // Parse the card description to find rank and suit
+    if (sscanf(card_desc, "%d%c", &rank, &suit) < 2) {
+        // Handle error in card description
+        strcpy(message, "Error in card description.");
+        return NULL;
+    }
+    while (current) {
+        if (current->rank == rank && current->suit == suit && current->face_up) {
+            return current;
+        }
+        current = current->next;
+    }
+    strcpy(message, "Card not found.");
+    return NULL;
+}
+
+bool move_card(Game* game, MoveHistory* history, const char* move_str, char* message) {
+    int from_col, to_col;
+    char from_card_desc[4];
+    if (sscanf(move_str, "%d %s %d", &from_col, from_card_desc, &to_col) != 3) {
+        strcpy(message, "Invalid move format.");
+        return false;
+    }
+
+    // Find the card in the source column
+    Card* from_card = find_card_in_stack(&game->tableaus[from_col - 1], from_card_desc, message);
+    if (!from_card) {
+        return false;
+    }
+
+    // Check if destination column is within valid range
+    if (to_col < 1 || to_col > MAX_COLUMNS) {
+        strcpy(message, "Invalid destination column.");
+        return false;
+    }
+
+    // Get the destination column top card
+    Card* to_card = game->tableaus[to_col - 1].top;
+
+    // Validate move
+    if (!validate_move(from_card, to_card, message)) {
+        return false;
+    }
+
+    // Perform the move (simplified)
+    if (to_card == NULL || validate_move(from_card, to_card, message)) {
+        pop(&game->tableaus[from_col - 1]);  // Remove card from source
+        push(&game->tableaus[to_col - 1], from_card);  // Place card on destination
+
+        // Record the move in history
+        Move move;
+        snprintf(move.move_str, sizeof(move.move_str), "%d %s %d", from_col, from_card_desc, to_col);
+        add_move_to_history(history, &move, message);
+        strcpy(message, "Move successful.");
+        return true;
+    }
+    return false;
+}
+
+int count_cards_in_column(const Stack* stack) {
+    Card* current = stack->top;
+    int count = 0;
+    while (current) {
+        if (current->face_up) {
+            count++;
+        }
+        current = current->next;
+    }
+    return count;
+}
+
+void push(Stack* stack, Card* card) {
+    card->next = stack->top;
+    stack->top = card;
+}
+
+Card* pop(Stack* stack) {
+    if (stack->top == NULL) {
+        return NULL;
+    }
+    Card* card = stack->top;
+    stack->top = card->next;
+    return card;
+}
+
 
 
 
