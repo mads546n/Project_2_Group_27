@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include "view/view.h"
-#include "model/model.h"
 #include <malloc.h>
 #include <time.h>
 #include <intrin.h>
@@ -150,6 +148,10 @@ void load(Card deck[], char* filename) {
 
 
 void processLD(char* filename) {
+//    char prefix[]= "../";
+//    strcat(prefix, filename);
+//    load(deck, prefix);
+
     load(deck, filename);
 }
 void processSW() {
@@ -298,7 +300,6 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
         switch (command[0]) {
             case 'L':
-                processL(argument);
                 if (command[1] == 'D')
                     processLD(argument);
                 else
