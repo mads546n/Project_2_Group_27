@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-
+#include<unistd.h>
 //Linked list structure.
 struct Deck {
     char* card;
@@ -148,10 +148,7 @@ void load(Card deck[], char* filename) {
 
 
 void processLD(char* filename) {
-//    char prefix[]= "../";
-//    strcat(prefix, filename);
-//    load(deck, prefix);
-
+    chdir("../");
     load(deck, filename);
 }
 void processSW() {
