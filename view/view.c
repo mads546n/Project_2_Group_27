@@ -129,7 +129,6 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
             maxHeight = height;
         }
     }
-
     // Print cards in each column
     for (int row = 0; row < maxHeight; row++) {
         for (int col = 0; col < 7; col++) {

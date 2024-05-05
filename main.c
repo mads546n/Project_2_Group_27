@@ -23,8 +23,6 @@ int main() {
 
     bool isEmpty = true; // Flag to indicate if the game board is empty
 
-    distributeDeckToColumns(deck, columns);
-
     printf("Shuffled deck: \n");
     shuffleDeck(deck);
     for (int i = 0; i < 52; i++) {
@@ -34,6 +32,8 @@ int main() {
     printf("\n");
 
     while (1) {
+
+        distributeDeckToColumns(deck, columns);
 
         // Display the game board
         displayBoard(columns, foundations, isEmpty, message, lastCommand);
