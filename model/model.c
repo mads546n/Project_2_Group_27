@@ -246,6 +246,91 @@ void shuffleDeck(Card deck[]) {
     }
 }
 
+// Function to process a given command for moving cards
+// Currently functions as a "skeleton"
+void processMoveCommand(char* moveCommand, ListNode* columns[], FoundationNode* foundations[], char* message) {
+    // First parse the movement-command to extract the source-location and destination-location for the move
+    char source[5];
+    char destination[3];
+    scanf(moveCommand, "%4[^->]->%2s", source, destination);
+
+    // Validate the move
+    bool isValidMove = validateMove(source, destination, columns, foundations);
+
+    if (isValidMove) {
+        // If condition = true, perform move
+        performMove(source, destination, columns, foundations);
+
+        // Return "OK" message and update the game-state and phase accordingly
+        updateGameState(columns, foundation);
+        strncpy(message, "OK", sizeof(message));
+    } else {
+        // Return an error message indicating move = not valid
+        strncpy(message, "Error: Invalid Move", sizeof(message));
+    }
+}
+
+// Function to validate attempted move by checking all cases of movement
+bool validateMove(char* source, char* destination, ListNode* columns[], FoundationNode foundations[]) {
+    // Parse source and destination for columns
+    int sourceColumn = atoi(source + 1);
+    int destinationColumn = atoi(destination + 1);
+
+    // Parse source and destination for foundations
+    int sourceFoundation = atoi(source + 1);
+    int destinationFoundation = atoi(destination + 1);
+
+
+    // Perform check if source column exists
+    if (source[0] == 'C') {
+        if (sourceColumn < 1 || sourceColumn > 7) {
+            return false; // If lower than 1 or exceeding 7, not an actual column
+        }
+
+        // Define the top card in source column
+        ListNode* sourceColumnTopCard = columns[sourceColumn - 1];
+        if (sourceColumnTopCard == NULL) {
+            return false; // Then the source column would be empty
+        }
+    } else if (source[0] == 'F') {
+        if (sourceFoundation < 1 || sourceFoundation > 4) {
+            return false;  // Not a valid source foundation
+        }
+
+        // Define the top card in source foundation
+        FoundationNode* sourceFoundationTopCard = &foundations[sourceFoundation - 1];
+        if (sourceFoundationTopCard == NULL) {
+            return false; // The foundation would be empty
+        }
+    } else {
+        return false; // Invalid type of source
+    }
+
+    // Perform check if destination column exists
+    if (destination[0] == 'C') {
+        if (destinationColumn < 1 || destinationColumn > 7) {
+            return false; // Invalid destination column
+        }
+    } else if (destination[0] == 'F') {
+        if (destinationFoundation < 1 || destinationFoundation > 4) {
+            return false; // Invalid destination foundation
+        }
+    } else {
+        return false; // Invalid type of destination
+    }
+
+}
+
+// function to perform move if move is deemed "valid"
+bool performMove(char* source, char* destination, ListNode* columns[], FoundationNode* foundations[]) {
+
+}
+
+// Function to update gamestate ensuring game-board is updated accordingly, and game-phase is valid
+bool updateGameState(ListNode* columns[], FoundationNode* foundations[]) {
+
+}
+
 
 
 
