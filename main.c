@@ -299,7 +299,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
             case 'L':
                 if (command[1] == 'D')
                     processLD(argument);
-                else
+                else if (command[1] == '\000')
                     processL(argument);
                 break;
             case 'S':
@@ -489,7 +489,7 @@ int main() {
     bool isEmpty = true; // Flag to indicate if the game board is empty
 
     printf("Shuffled deck: \n");
-//    shuffleDeck(deck);
+
     for (int i = 0; i < 52; i++) {
         printf("[%c%c] ", deck[i].rank, deck[i].suit);
     }
