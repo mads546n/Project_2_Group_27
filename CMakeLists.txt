@@ -3,11 +3,9 @@ project(Project_2 C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(Project_2 main.c
-        controller/controller.c
-        model/model.c
-        view/view.c
-        view/view.h
-        controller/controller.h
-        model/model.h
-)
+include_directories(${PROJECT_SOURCE_DIR}/model)
+include_directories(${PROJECT_SOURCE_DIR}/view)
+include_directories(${PROJECT_SOURCE_DIR}/controller)
+
+add_executable(your_executable_name main.c model/model.c view/view.c controller/controller.c)
+
