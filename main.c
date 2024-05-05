@@ -12,8 +12,6 @@ struct Deck {
     struct Deck* next;
 };
 
-
-
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
@@ -39,6 +37,7 @@ typedef struct FoundationNode {
 Card deck[52];
 ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
+bool playmode = false;
 
 // Define placeholder functions for each startDeck
 //bool isDuplicate(Card deck[], int size, Card card) {
@@ -168,7 +167,9 @@ void processSD(char* argument) {
 }
 
 void processP() {
-    printf("Placeholder function for P startDeck\n");
+    playmode = true;
+
+    printf("Playmode On\n");
 }
 
 void processQ() {
@@ -281,48 +282,79 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     char argument[MAX_COMMAND_LENGTH];
     sscanf(input, "%s %s", command, argument);
 
-    if (strcmp(command, "LD") == 0 ||
-        strcmp(command, "SW") == 0 ||
-        strcmp(command, "SI") == 0 ||
-        strcmp(command, "SR") == 0 ||
-        strcmp(command, "SD") == 0 ||
-        strcmp(command, "P") == 0 ||
-        strcmp(command, "Q") == 0 ||
-        strcmp(command, "U") == 0 ||
-        strcmp(command, "R") == 0 ||
-        strcmp(command, "S") == 0 ||
-        strcmp(command, "L") == 0) {
-        // If the input startDeck is valid, update the message
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+    if (!playmode) {
+        if (strcmp(command, "LD") == 0 ||
+            strcmp(command, "SW") == 0 ||
+            strcmp(command, "SI") == 0 ||
+            strcmp(command, "SR") == 0 ||
+            strcmp(command, "SD") == 0 ||
+            strcmp(command, "P") == 0 ||
+            strcmp(command, "Q") == 0 ||
+            strcmp(command, "U") == 0 ||
+            strcmp(command, "R") == 0 ||
+            strcmp(command, "S") == 0 ||
+            strcmp(command, "L") == 0) {
+            // If the input startDeck is valid, update the message
+            strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
 
+            switch (command[0]) {
+                case 'L':
+                    if (command[1] == 'D')
+                        processLD(argument);
+                    else
+                        processL(argument);
+                    break;
+                case 'S':
+                    processS(argument);
+                    break;
+                case 'R':
+                    processR();
+                    break;
+                case 'U':
+                    processU();
+                    break;
+                case 'Q':
+                    processQ();
+                    break;
+                case 'P':
+                    processP();
+                    playmode = true;
+                    break;
+                case 'I':
+                    if (command[1] == 'I')
+                        processSI(argument);
+                    break;
+                case 'W':
+                    processSW();
+                    break;
+                default:
+                    // Error: Command not found
+                    strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
+
+
+            }
+        }
+    }
+//printf("%d", strcmp(command, "F"));
+//    printf("%d", strcmp(command, "C"));
+
+    if (playmode&&(strncmp(command, "C", 1) == 0 || strncmp(command, "F", 1) == 0)){
+        int test = 0;
+        // If the input startDeck is valid, update the message
         switch (command[0]) {
-            case 'L':
-                if (command[1] == 'D')
-                    processLD(argument);
-                else
-                    processL(argument);
+            case 'C':
+                test = command[1] - '0';
+                if(test >=1 && test <=7 ){
+                    strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+                    //Call relevant method here.
+                }
                 break;
-            case 'S':
-                processS(argument);
-                break;
-            case 'R':
-                processR();
-                break;
-            case 'U':
-                processU();
-                break;
-            case 'Q':
-                processQ();
-                break;
-            case 'P':
-                processP();
-                break;
-            case 'I':
-                if (command[1] == 'I')
-                    processSI(argument);
-                break;
-            case 'W':
-                processSW();
+            case 'F':
+                test = command[1] - '0';
+                if(test >=1 && test <=4 ){
+                    strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+                    //Call relevant method here.
+                }
                 break;
             default:
                 // Error: Command not found
@@ -331,6 +363,8 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
         }
     }
+
+
 
 }
 // Function to distribute a given card deck along the columns
