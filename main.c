@@ -461,32 +461,6 @@ void shuffleDeck(Card deck[]) {
         deck[i] = shuffledDeck[i];
     }
 }
-
-// Function to process a given command for moving cards
-// Currently functions as a "skeleton"
-void processMoveCommand(char* moveCommand, ListNode* columns[], FoundationNode* foundations[], char* message) {
-    // First parse the movement-command to extract the source-location and destination-location for the move
-    char source[5];
-    char destination[3];
-    scanf(moveCommand, "%4[^->]->%2s", source, destination);
-
-    // Validate the move
-    bool isValidMove = validateMove(source, destination, columns, foundations);
-
-    if (isValidMove) {
-        // If condition = true, perform move
-        performMove(source, destination, columns, foundations);
-
-        // Return "OK" message and update the game-state and phase accordingly
-        updateGameState(columns, foundation);
-        strncpy(message, "OK", sizeof(message));
-    } else {
-        // Return an error message indicating move = not valid
-        strncpy(message, "Error: Invalid Move", sizeof(message));
-    }
-}
-
-// Function to validate attempted move by checking all cases of movement
 bool validateMove(char* source, char* destination, ListNode* columns[], FoundationNode foundations[]) {
     // Parse source and destination for columns
     int sourceColumn = atoi(source + 1);
@@ -547,8 +521,31 @@ bool updateGameState(ListNode* columns[], FoundationNode* foundations[]) {
 
 }
 
+// Function to process a given command for moving cards
+// Currently functions as a "skeleton"
+void processMoveCommand(char* moveCommand, ListNode* columns[], FoundationNode* foundations[], char* message) {
+    // First parse the movement-command to extract the source-location and destination-location for the move
+    char source[5];
+    char destination[3];
+    scanf(moveCommand, "%4[^->]->%2s", source, destination);
 
+    // Validate the move
+    bool isValidMove = validateMove(source, destination, columns, foundations);
 
+    if (isValidMove) {
+        // If condition = true, perform move
+        performMove(source, destination, columns, foundations);
+
+        // Return "OK" message and update the game-state and phase accordingly
+        updateGameState(columns, foundations);
+        strncpy(message, "OK", sizeof(message));
+    } else {
+        // Return an error message indicating move = not valid
+        strncpy(message, "Error: Invalid Move", sizeof(message));
+    }
+}
+
+// Function to validate attempted move by checking all cases of movement
 
 int main() {
     // Initialize a deck
