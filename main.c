@@ -12,8 +12,6 @@ struct Deck {
     struct Deck* next;
 };
 
-
-
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
@@ -39,18 +37,9 @@ typedef struct FoundationNode {
 Card deck[52];
 ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
-
-// Define placeholder functions for each startDeck
-//bool isDuplicate(Card deck[], int size, Card card) {
-//    for (int i = 0; i < size; i++) {
-//        if (deck[i].rank == card.rank && deck[i].suit == card.suit) {
-//            return true;
-//        }
-//    }
-//    return false;
-//}
-
 char buffer[3][51];
+
+void rearrangeDeck(ListNode* columns[]);
 
 void insertStart(struct Deck** head, char* card){
     //Allocates memory for the linked list using malloc.
@@ -67,7 +56,7 @@ void insertStart(struct Deck** head, char* card){
 void insertEnd(struct Deck** head, char* card){
     struct Deck* newNode
             = (struct Deck*)malloc(sizeof(struct Deck));
-//    printf("size of malloc is%llu",sizeof(struct Deck));
+    //printf("size of malloc is%llu",sizeof(struct Deck));
 
     // store the card in the new Deck
     newNode->card = card;
@@ -94,30 +83,6 @@ void printList(struct Deck* head){
         current = current->next;
     }
 }
-
-//void startDeck (){
-//    int i = 1;
-//    struct Deck* head = NULL;
-//    //Checks for LD startDeck.
-//    //Checks if the LD startDeck has a path name.
-//    char *filename = "../model/cards.txt";
-//    FILE *fp = fopen(filename, "r");
-//    char ch[105];
-//    // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
-//    bool first = true;
-//    while (fgets(ch, 105, fp) != NULL) {
-//        if (first) {
-//            strcpy(buffer[0], ch);
-//            insertStart(&head, buffer[0]);
-//            first = false;
-//        } else {
-//            strcpy(buffer[i], ch);
-//            insertEnd(&head, buffer[i++]);
-//        }
-//    }
-//}
-
-
 // Function to initialize a sample deck
 void load(Card deck[], char* filename) {
     int i = 1;
@@ -151,8 +116,9 @@ void processLD(char* filename) {
     chdir("../");
     load(deck, filename);
 }
+
 void processSW() {
-    printf("Placeholder function for SW startDeck\n");
+    rearrangeDeck(columns);
 }
 
 void processSI(char* argument) {
@@ -303,7 +269,10 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                     processL(argument);
                 break;
             case 'S':
-                processS(argument);
+                if (command[1] == 'W')
+                    processSW(argument);
+                else if (command[1] == '\000')
+                    processS(argument);
                 break;
             case 'R':
                 processR();
@@ -322,7 +291,8 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                     processSI(argument);
                 break;
             case 'W':
-                processSW();
+                //if (command[1] == 'W')
+                //processSW(argument);
                 break;
             default:
                 // Error: Command not found
@@ -364,7 +334,27 @@ void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
         columns[i] = currentColumn;
     }
 }
+//will arrange deck according to Figure 5
+void rearrangeDeck(ListNode* columns[]) {
+    //ListNode* columns[7] = { NULL };
+    for (int i = 0; i < 7; i++) {
+        printf("C%d\t", i + 1); // Print column header
 
+        // Print elements of the current column
+        ListNode* current = columns[i];
+        int count = 0;
+        while (current != NULL) {
+            printf("[%c%c]\t", current->card.rank, current->card.suit);
+            count++;
+            // Start a new row after every 7 elements
+            if (count % 7 == 0)
+                printf("\n");
+            // Move to the next node
+            current = current->next;
+        }
+        printf("\n");
+    }
+}
 // Helper-function to print the deck
 void printDeck(Card deck[]) {
     for (int i = 0; i < 52; i++) {
@@ -462,17 +452,17 @@ void shuffleDeck(Card deck[]) {
     }
 }
 
-
-
-
-
-
 int main() {
     // Initialize a deck
 
 
     load(deck, "../cards.txt");
+    processSW(columns);
 
+    // Assuming 'columns' array is initialized and populated
+    ListNode* columns[7] = { NULL }; // Initialize columns array with NULL pointers
+    // Populate 'columns' array with cards from 'deck' array using distributeDeckToColumns function
+    rearrangeDeck(columns);
 
     // Printing sample deck
     printf("Original deck:\n");
@@ -480,10 +470,7 @@ int main() {
     printf("\n");
 
     // Arrays of pointer to the head of each column and foundation
-
-
     char message[50] = "";
-
     char lastCommand[50] = "";
 
     bool isEmpty = true; // Flag to indicate if the game board is empty
@@ -495,6 +482,8 @@ int main() {
     }
     printf("\n");
     printf("\n");
+
+
 
     while (1) {
 
