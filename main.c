@@ -39,6 +39,7 @@ typedef struct FoundationNode {
 Card deck[52];
 ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
+
 bool playmode = false;
 
 // Define placeholder functions for each startDeck
@@ -389,6 +390,10 @@ bool validateMove(char* source, char* destination, ListNode* columns[], Foundati
         ListNode* sourceColumnTopCard = columns[sourceColumn - 1];
         FoundationNode* destinationFoundationTopCard = &foundations[destinationFoundation - 1];
 
+        while (destinationFoundationTopCard != NULL && destinationFoundationTopCard->next != NULL) {
+            destinationFoundationTopCard = destinationFoundationTopCard->next;
+        }
+
         // Check if card from column can be moved to foundation
         if (sourceColumnTopCard->card.rank == destinationFoundationTopCard->card.rank + 1 &&
         sourceColumnTopCard->card.suit == destinationFoundationTopCard->card.suit) {
@@ -496,17 +501,24 @@ bool performMove(char* source, char* destination, ListNode* columns[], Foundatio
 }
 
 // Function to process a given command for moving cards
-void processMoveCommand(char* moveCommand, ListNode* columns[], FoundationNode* foundations[], char* message) {
+void processMoveCommand(char moveCommand[], ListNode* columns[], FoundationNode* foundations[], char* message) {
     // Extract source and destination from the attempted moveCommand
     char source[5];
+    char card[3];
     char destination[3];
-    if (scanf(moveCommand, "%4[^:]:%2s[^->]->%2s", source, destination) != 2) {
+    if (sscanf(moveCommand, "%4[^:]:%2[^->]->%2s", source, card, destination) != 3) {
         strncpy(message, "Error: Invalid move command", MAX_COMMAND_LENGTH);
         return;
     }
 
+    strcat(source, card);
+
+    printf("Source: %s, Card: %s, Destination: %s\n", source, card, destination);
+
     // Validate the move
     bool isValidMove = validateMove(source, destination, columns, *foundations);
+
+    printf("Validation Result: %d\n", isValidMove);
 
     if (isValidMove) {
         // If condition = true, perform move
