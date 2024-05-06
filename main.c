@@ -99,6 +99,7 @@ void printList(struct Deck* head){
     }
 }
 
+
 //void startDeck (){
 //    int i = 1;
 //    struct Deck* head = NULL;
@@ -195,6 +196,9 @@ void processS(char* argument) {
 
 void processL(char* argument) {
     printf("Placeholder function for L startDeck\n");
+}
+void processQQ() {
+    exit(0);
 }
 
 
