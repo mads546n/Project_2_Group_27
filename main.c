@@ -14,14 +14,11 @@ struct Deck {
     struct Deck* next;
 };
 
-
-
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
 #define MAX_CARD_LENGTH 3
 #define MAX_FILENAME_LENGTH 100
-
 
 typedef struct Card {
     char rank;
@@ -94,6 +91,38 @@ void insertEnd(struct Deck** head, char* card){
     // make the next of the tail to the new Deck
     current->next = newNode;
 }
+void printList(struct Deck* head){
+    struct Deck* current = head;
+    while (current != NULL) {
+        printf("%s", current->card);
+        current = current->next;
+    }
+}
+
+//void startDeck (){
+//    int i = 1;
+//    struct Deck* head = NULL;
+//    //Checks for LD startDeck.
+//    //Checks if the LD startDeck has a path name.
+//    char *filename = "../model/cards.txt";
+//    FILE *fp = fopen(filename, "r");
+//    char ch[105];
+//    // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
+//    bool first = true;
+//    while (fgets(ch, 105, fp) != NULL) {
+//        if (first) {
+//            strcpy(buffer[0], ch);
+//            insertStart(&head, buffer[0]);
+//            first = false;
+//        } else {
+//            strcpy(buffer[i], ch);
+//            insertEnd(&head, buffer[i++]);
+//        }
+//    }
+//}
+
+
+// Function to initialize a sample deck
 void load(Card deck[], char* filename) {
     int i = 1;
     struct Deck* head = NULL;
@@ -120,7 +149,6 @@ void load(Card deck[], char* filename) {
     }
     printf("\n");
 }
-
 
 
 void processLD(char* filename) {
@@ -170,6 +198,37 @@ void processL(char* argument) {
 }
 
 
+// Function to distribute a given card deck along the columns
+void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
+    bool cardAdded[52] = { false };
+    int index = 0;
+    for (int i = 0; i < 7; i++) {
+        ListNode* currentColumn = NULL;
+        int cardsToAdd = (i == 0) ? 1 : i + 5; // Determine number of cards to be distributed in each column
+        for (int j = 0; j < cardsToAdd && index < 52; j++) {
+            while (index < 52 && cardAdded[index]) {
+                index++;
+            }
+            if (index < 52) {
+                ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
+                if (newNode == NULL) {
+                    fprintf(stderr,"Memory allocation failed\n");
+                    while (currentColumn != NULL) {
+                        ListNode* temp = currentColumn;
+                        currentColumn = currentColumn->next;
+                        free(temp);
+                    }
+                    return;
+                }
+                newNode->card = deck[index];
+                newNode->next = currentColumn;
+                currentColumn = newNode;
+                cardAdded[index] = true;
+            }
+        }
+        columns[i] = currentColumn;
+    }
+}
 
 // Helper-function to print the deck
 void printDeck(Card deck[]) {
@@ -271,8 +330,12 @@ void shuffleDeck(Card deck[]) {
 // Function to validate a performed move in accordance with the rules of Solitaire
 bool validateMove(char* source, char* destination, ListNode* columns[], FoundationNode foundations[]) {
     // Parse source and destination for columns
-    int sourceColumn = atoi(source + 1);
-    int destinationColumn = atoi(destination + 1);
+    //source[1] - '0';
+    int sourceColumn = atoi(source + 1 );
+    int destinationColumn = atoi(destination + 1 );
+    printf("Destination is: %s", destination);
+    printf("destinationColumn is: %d", destinationColumn);
+
 
     // Parse source and destination for foundations
     int sourceFoundation = atoi(source + 1);
@@ -475,39 +538,6 @@ void processMoveCommand(char moveCommand[], ListNode* columns[], FoundationNode*
     }
 }
 
-
-// Function to distribute a given card deck along the columns
-void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
-    bool cardAdded[52] = { false };
-    int index = 0;
-    for (int i = 0; i < 7; i++) {
-        ListNode* currentColumn = NULL;
-        int cardsToAdd = (i == 0) ? 1 : i + 5; // Determine number of cards to be distributed in each column
-        for (int j = 0; j < cardsToAdd && index < 52; j++) {
-            while (index < 52 && cardAdded[index]) {
-                index++;
-            }
-            if (index < 52) {
-                ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
-                if (newNode == NULL) {
-                    fprintf(stderr,"Memory allocation failed\n");
-                    while (currentColumn != NULL) {
-                        ListNode* temp = currentColumn;
-                        currentColumn = currentColumn->next;
-                        free(temp);
-                    }
-                    return;
-                }
-                newNode->card = deck[index];
-                newNode->next = currentColumn;
-                currentColumn = newNode;
-                cardAdded[index] = true;
-            }
-        }
-        columns[i] = currentColumn;
-    }
-}
-
 void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areColumnsEmpty, char* message, char* lastCommand) {
 
     printf("Yukon Solitaire\n\n");
@@ -663,7 +693,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 if(test >=1 && test <=7 ){
                     strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
                     //Call relevant method here.
-                    performMove(command, columns, foundations, message);
+                    processMoveCommand(command, columns, foundations, message);
                 }
                 break;
             case 'F':
@@ -671,7 +701,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 if(test >=1 && test <=4 ){
                     strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
                     //Call relevant method here.
-                    performMove(command, columns, foundations, message);
+                    processMoveCommand(command, columns, foundations, message);
                 }
                 break;
             default:
