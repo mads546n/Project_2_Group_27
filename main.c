@@ -39,8 +39,10 @@ typedef struct FoundationNode {
 Card deck[52];
 ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
+Card* split(Card deck[], int split);
+void shuffleDeck(Card deck[]);
+void saveDeckToFile(Card deck[], char* filename);
 
-bool playPhase = false;
 
 bool playmode = false;
 
@@ -162,7 +164,6 @@ void processSD(char* argument) {
 }
 
 void processP() {
-    playPhase = true;
     playmode = true;
 
     printf("Playmode On\n");
@@ -198,7 +199,7 @@ void processR() {
 }
 
 void processS(char* argument) {
-    saveDecktoFile(deck, argument);
+    saveDeckToFile(deck, argument);
 }
 
 void processL(char* argument) {
@@ -695,6 +696,10 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 case 'S':
                     if (playmode)
                     processS(argument);
+                    else if (command[1] == 'R' && !playmode)
+                        processSR();
+                    else if (command[1] == 'D' && !playmode)
+                        processSD(argument);
                     break;
                 case 'R':
                     if (playmode)
