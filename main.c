@@ -716,6 +716,22 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
 }
 
+// Function to save
+void saveDeckToFile(Card deck[], char* filename) {
+    FILE *fp = fopen(filename, "w");
+    if (fp == NULL) {
+        fprintf(stderr, "Error: Unable to open file for writing\n");
+        return;
+    }
+
+    // For-loop to iterate through the deck, that we're trying to save, and write each card in the file
+    for (int i = 0; i < 52; i++) {
+        fprintf(fp, "%c%c\n", deck[i].rank, deck[i].suit);
+    }
+
+    fclose(fp);
+}
+
 int main() {
     // Initialize a deck
 
@@ -738,12 +754,31 @@ int main() {
     bool isEmpty = true; // Flag to indicate if the game board is empty
 
     printf("Shuffled deck: \n");
-//    shuffleDeck(deck);
+    shuffleDeck(deck);
     for (int i = 0; i < 52; i++) {
         printf("[%c%c] ", deck[i].rank, deck[i].suit);
     }
     printf("\n");
     printf("\n");
+
+    saveDeckToFile(deck, "shuffled_deck.txt");
+
+    Card loadedDeck[52];
+    load(loadedDeck, "shuffled_deck.txt");
+
+    bool decksMatch = true;
+    for (int i = 0; i < 52; i++) {
+        if (loadedDeck[i].rank != deck[i].rank || loadedDeck[i].suit != deck[i].suit) {
+            decksMatch = false;
+            break;
+        }
+    }
+
+    if (decksMatch) {
+        printf("Loaded deck matches shuffled deck\n");
+    } else {
+        printf("Loaded deck doesn't match shuffled deck\n");
+    }
 
     while (1) {
 
