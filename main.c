@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include<unistd.h>
+#include <assert.h>
 
 //Linked list structure.
 struct Deck {
@@ -38,8 +39,10 @@ typedef struct FoundationNode {
 Card deck[52];
 ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
+Card* split(Card deck[], int split);
+void shuffleDeck(Card deck[]);
+void saveDeckToFile(Card deck[], char* filename);
 
-bool playPhase = false;
 
 bool playmode = false;
 
@@ -99,29 +102,6 @@ void printList(struct Deck* head){
 }
 
 
-//void startDeck (){
-//    int i = 1;
-//    struct Deck* head = NULL;
-//    //Checks for LD startDeck.
-//    //Checks if the LD startDeck has a path name.
-//    char *filename = "../model/cards.txt";
-//    FILE *fp = fopen(filename, "r");
-//    char ch[105];
-//    // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
-//    bool first = true;
-//    while (fgets(ch, 105, fp) != NULL) {
-//        if (first) {
-//            strcpy(buffer[0], ch);
-//            insertStart(&head, buffer[0]);
-//            first = false;
-//        } else {
-//            strcpy(buffer[i], ch);
-//            insertEnd(&head, buffer[i++]);
-//        }
-//    }
-//}
-
-
 // Function to initialize a sample deck
 void load(Card deck[], char* filename) {
     int i = 1;
@@ -160,11 +140,23 @@ void processSW() {
 }
 
 void processSI(char* argument) {
-    printf("Placeholder function for SI startDeck\n");
+    int splitIndex = atoi(argument);
+    if (splitIndex < 1 || splitIndex > 51) {
+        printf("Invalid split index\n");
+        return;
+    }
+    Card* newDeck = split(deck, splitIndex);
+    if (newDeck != NULL) {
+        memcpy(deck, newDeck, sizeof(Card) * 52); // Copy the new deck back to the main deck
+        free(newDeck); // Assume split allocates memory for a new deck
+        printf("Deck split at %d and interleaved\n", splitIndex);
+    } else {
+        printf("Failed to split and interleave the deck\n");
+    }
 }
 
 void processSR() {
-    printf("Placeholder function for SR startDeck\n");
+    shuffleDeck(deck);
 }
 
 void processSD(char* argument) {
@@ -172,13 +164,30 @@ void processSD(char* argument) {
 }
 
 void processP() {
-    playPhase = true;
+    playmode = true;
 
     printf("Playmode On\n");
 }
 
 void processQ() {
-    printf("Placeholder function for Q startDeck\n");
+    playmode = false;
+    load(deck, "shuffled_deck.txt");
+    for(int i = 0; i < 7; i++) {
+        while (columns[i] != NULL) {
+            ListNode* toDelete = columns[i];
+            columns[i] = columns[i]->next;
+            free(toDelete);
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        while (foundations[i] != NULL) {
+            FoundationNode* toDelete = foundations[i];
+            foundations[i] = foundations[i]->next;
+            free(toDelete);
+        }
+    }
+
+
 }
 
 void processU() {
@@ -190,7 +199,7 @@ void processR() {
 }
 
 void processS(char* argument) {
-    printf("Placeholder function for S startDeck\n");
+    saveDeckToFile(deck, argument);
 }
 
 void processL(char* argument) {
@@ -334,14 +343,17 @@ void shuffleDeck(Card deck[]) {
 bool validateMove(char* source, char* destination, ListNode* columns[], FoundationNode foundations[]) {
     // Parse source and destination for columns
     //source[1] - '0';
-    int sourceColumn = atoi(source + 1 );
+//    char *ptr = source;
+    int sourceColumn = source[1]-'0';
+
+//    int sourceColumn = atoi(source + 1);
     int destinationColumn = atoi(destination + 1 );
-    printf("Destination is: %s", destination);
-    printf("destinationColumn is: %d", destinationColumn);
+//    printf("Destination is: %s\t", destination);
+//    printf("destinationColumn is: %d\t", destinationColumn);
 
 
     // Parse source and destination for foundations
-    int sourceFoundation = atoi(source + 1);
+    int sourceFoundation = source[1]-'0';
     int destinationFoundation = atoi(destination + 1);
 
     printf("Source Column: %d, Destination Column: %d\n", sourceColumn, destinationColumn);
@@ -374,7 +386,7 @@ bool validateMove(char* source, char* destination, ListNode* columns[], Foundati
         }
     } else {
         printf("Invalid source type\n");
-        return false; // Invalid type of source
+        return true; // Invalid type of source
     }
 
     // Perform check if destination column exists
@@ -388,16 +400,19 @@ bool validateMove(char* source, char* destination, ListNode* columns[], Foundati
             printf("Invalid destination foundation\n");
             return false; // Invalid destination foundation
         }
-    } else {
-        printf("Invalid destination type\n");
-        return false; // Invalid type of destination
     }
+//    else {
+//        printf("Invalid destination type\n");
+//        return true; // Invalid type of destination
+//    }
 
     // Validate the attempted move based on the source- and destination types
     if (source[0] == 'C' && destination[0] == 'F') {
         // Move from column to foundation
         ListNode* sourceColumnTopCard = columns[sourceColumn - 1];
         FoundationNode* destinationFoundationTopCard = &foundations[destinationFoundation - 1];
+        char* test = "woo";
+//        destinationFoundationTopCard = test;
 
         while (destinationFoundationTopCard != NULL && destinationFoundationTopCard->next != NULL) {
             destinationFoundationTopCard = destinationFoundationTopCard->next;
@@ -435,26 +450,26 @@ bool validateMove(char* source, char* destination, ListNode* columns[], Foundati
             return false; // Invalid move
         }
     } else {
-        printf("Invalid move\n");
+        printf("Valid move??\n");
         // Invalid move entirely
-        return false;
+        return true;
     }
 }
 
 // function to perform move if move is deemed "valid"
 bool performMove(char* source, char* destination, ListNode* columns[], FoundationNode* foundations[]) {
     // Validate the move using the validateMove-function
-    if (!validateMove(source, destination, columns, (FoundationNode *) foundations)) {
-        printf("Invalid move\n");
-        return false;
-    }
+//    if (!validateMove(source, destination, columns, (FoundationNode *) foundations)) {
+//        printf("performMove Invalid move\n");
+//        return false;
+//    }
 
     // Parse the source and destination for columns
-    int sourceColumn = atoi(source + 1);
+    int sourceColumn = source[1]-'0';
     int destinationColumn = atoi(destination + 1);
 
     // Parse the source and destination for foundations
-    int sourceFoundation = atoi(source + 1);
+    int sourceFoundation = source[1]-'0';
     int destinationFoundation = atoi(destination + 1);
 
     printf("Source Column: %d, Destination Column: %d\n", sourceColumn, destinationColumn);
@@ -473,9 +488,15 @@ bool performMove(char* source, char* destination, ListNode* columns[], Foundatio
         destinationFoundationTopCard->card = sourceColumnTopCard->card;
         destinationFoundationTopCard->next = NULL;
 
+        sourceColumnTopCard->next = (ListNode *)malloc(sizeof(ListNode));
+        sourceColumnTopCard = sourceColumnTopCard->next;
+        sourceColumnTopCard->card = destinationFoundationTopCard->card;
+        sourceColumnTopCard->next = NULL;
+
         // Remove the top card from the column
         columns[sourceColumn - 1] = sourceColumnTopCard->next;
         free(sourceColumnTopCard);
+        free(destinationFoundationTopCard);
 
         // Print message showcasing move was successful
         printf("Move from %s to %s was successful\n", source, destination);
@@ -501,10 +522,28 @@ bool performMove(char* source, char* destination, ListNode* columns[], Foundatio
         printf("Move from %s to %s was successful\n", source, destination);
         return true;
     }
+    else if (source[0] == 'C' && destination[0] == 'C') {
+        ListNode* sourceColumnTopCard = columns[sourceColumn - 1];
+        ListNode* destinationColumnTopCard = columns[destinationColumn - 1];
+
+        // Update the column with top card from column.
+        ListNode* newCardNode = (ListNode*)malloc(sizeof(ListNode));
+        newCardNode->card = sourceColumnTopCard->card;
+        newCardNode->next = destinationColumnTopCard;
+        columns[destinationColumn - 1] = newCardNode;
+
+        // Remove the top card from column
+        columns[sourceColumn - 1] = sourceColumnTopCard->next;
+        free(newCardNode);
+
+        // Print message
+        printf("Move from %s to %s was successful\n", source, destination);
+        return true;
+    }
 
     // If move is not from column to foundation or foundation to column
     else {
-        printf("Invalid move\n");
+        printf("If move is not from column to foundation or foundation to column\n");
         return false;
     }
 }
@@ -534,10 +573,10 @@ void processMoveCommand(char moveCommand[], ListNode* columns[], FoundationNode*
         performMove(source, destination, columns, foundations);
 
         // Return "OK" message
-        strncpy(message, "OK", sizeof(message));
+        strncpy(message, "OK", sizeof(*message));
     } else {
         // Return an error message indicating move = not valid
-        strncpy(message, "Error: Invalid Move", sizeof(message));
+        strncpy(message, "Error: Invalid Move", sizeof(*message));
     }
 }
 
@@ -631,62 +670,70 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     char argument[MAX_COMMAND_LENGTH];
     sscanf(input, "%s %s", command, argument);
 
-    if (!playmode) {
-        if (strcmp(command, "LD") == 0 ||
-            strcmp(command, "SW") == 0 ||
-            strcmp(command, "SI") == 0 ||
-            strcmp(command, "SR") == 0 ||
-            strcmp(command, "SD") == 0 ||
-            strcmp(command, "P") == 0 ||
-            strcmp(command, "Q") == 0 ||
-            strcmp(command, "U") == 0 ||
-            strcmp(command, "R") == 0 ||
-            strcmp(command, "S") == 0 ||
-            strcmp(command, "L") == 0) {
-            // If the input startDeck is valid, update the message
-            strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
 
-            switch (command[0]) {
+    if (strcmp(command, "LD") == 0 ||
+        strcmp(command, "SW") == 0 ||
+        strcmp(command, "SI") == 0 ||
+        strcmp(command, "SR") == 0 ||
+        strcmp(command, "SD") == 0 ||
+        strcmp(command, "P") == 0 ||
+        strcmp(command, "Q") == 0 ||
+        strcmp(command, "U") == 0 ||
+        strcmp(command, "R") == 0 ||
+        strcmp(command, "S") == 0 ||
+        strcmp(command, "L") == 0 || strcmp(command, "QQ") == 0) {
+        // If the input startDeck is valid, update the message
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+
+        switch (command[0]) {
+
                 case 'L':
-                    if (command[1] == 'D')
-                        processLD(argument);
-                    else
-                        processL(argument);
-                    break;
+                if (command[1] == 'D' &&  !playmode)
+                    processLD(argument);
+                else if (!playmode)
+                    processL(argument);
+                break;
                 case 'S':
+                    if (playmode)
                     processS(argument);
+                    else if (command[1] == 'R' && !playmode)
+                        processSR();
+                    else if (command[1] == 'D' && !playmode)
+                        processSD(argument);
                     break;
                 case 'R':
+                    if (playmode)
                     processR();
                     break;
                 case 'U':
+                    if (playmode)
                     processU();
                     break;
                 case 'Q':
-                    if (strcmp(command, "QQ") == 0)
+                    if (command[0] == 'Q' && command[1] == 'Q')
                         processQQ();
-                    else
+                    else if (command[0] == 'Q' && playmode)
                         processQ();
                     break;
                 case 'P':
+                    if (!playmode)
                     processP();
                     playmode = true;
                     break;
                 case 'I':
-                    if (command[1] == 'I')
+                    if (command[1] == 'I' && !playmode)
                         processSI(argument);
                     break;
                 case 'W':
+                    if (!playmode)
                     processSW();
                     break;
                 default:
                     // Error: Command not found
                     strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
-
-
             }
         }
-    }
+
 //printf("%d", strcmp(command, "F"));
 //    printf("%d", strcmp(command, "C"));
 
@@ -722,6 +769,23 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
 }
 
+
+// Function to save
+void saveDeckToFile(Card deck[], char* filename) {
+    FILE *fp = fopen(filename, "w");
+    if (fp == NULL) {
+        fprintf(stderr, "Error: Unable to open file for writing\n");
+        return;
+    }
+
+    // For-loop to iterate through the deck, that we're trying to save, and write each card in the file
+    for (int i = 0; i < 52; i++) {
+        fprintf(fp, "%c%c\n", deck[i].rank, deck[i].suit);
+    }
+
+    fclose(fp);
+}
+
 int main() {
     // Initialize a deck
 
@@ -744,12 +808,31 @@ int main() {
     bool isEmpty = true; // Flag to indicate if the game board is empty
 
     printf("Shuffled deck: \n");
-//    shuffleDeck(deck);
+    shuffleDeck(deck);
     for (int i = 0; i < 52; i++) {
         printf("[%c%c] ", deck[i].rank, deck[i].suit);
     }
     printf("\n");
     printf("\n");
+
+    saveDeckToFile(deck, "shuffled_deck.txt");
+
+    Card loadedDeck[52];
+    load(loadedDeck, "shuffled_deck.txt");
+
+    bool decksMatch = true;
+    for (int i = 0; i < 52; i++) {
+        if (loadedDeck[i].rank != deck[i].rank || loadedDeck[i].suit != deck[i].suit) {
+            decksMatch = false;
+            break;
+        }
+    }
+
+    if (decksMatch) {
+        printf("Loaded deck matches shuffled deck\n");
+    } else {
+        printf("Loaded deck doesn't match shuffled deck\n");
+    }
 
     while (1) {
 
