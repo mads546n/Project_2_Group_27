@@ -631,35 +631,45 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     } else if (strcmp(command, "LD") == 0 && numParsed == 2 && !playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processLD(argument);
+
     } else if (strcmp(command, "SW") == 0 && numParsed == 1 && !playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processSW();
+
     } else if (strcmp(command, "SI") == 0 && numParsed == 2 && !playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processSI(argument);
+
     } else if (strcmp(command, "SR") == 0 && numParsed == 1 && !playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processSR();
+
     } else if (strcmp(command, "SD") == 0 && numParsed == 2 && !playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processSD(argument);
+
     } else if (strcmp(command, "Q") == 0 && numParsed == 1 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processQ();
-        playPhase = false; // Optionally reset play phase
+
     } else if (strcmp(command, "U") == 0 && numParsed == 1 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processU();
+
     } else if (strcmp(command, "R") == 0 && numParsed == 1 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processR();
+
     } else if (strcmp(command, "S") == 0 && numParsed == 2 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processS(argument);
+
     } else if (strcmp(command, "L") == 0 && numParsed == 2 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processL(argument);
+
     } else {
+
         strncpy(message, "Error: Command Invalid", MAX_MESSAGE_LENGTH);
     }
 }
