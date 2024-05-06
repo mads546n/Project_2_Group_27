@@ -39,7 +39,7 @@ ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
 char buffer[3][51];
 
-void rearrangeDeck(ListNode* columns[]);
+//void rearrangeDeck(ListNode* columns[]);
 
 void insertStart(struct Deck** head, char* card){
     //Allocates memory for the linked list using malloc.
@@ -81,6 +81,26 @@ void printList(struct Deck* head){
     while (current != NULL) {
         printf("%s", current->card);
         current = current->next;
+    }
+}
+void rearrangeDeck(ListNode* columns[]) {
+    //ListNode* columns[7] = { NULL };
+    for (int i = 0; i < 7; i++) {
+        printf("C%d\t", i + 1); // Print column header
+
+        // Print elements of the current column
+        ListNode* current = columns[i];
+        int count = 0;
+        while (current != NULL) {
+            printf("[%c%c]\t", current->card.rank, current->card.suit);
+            count++;
+            // Start a new row after every 7 elements
+            if (count % 7 == 0)
+                printf("\n");
+            // Move to the next node
+            current = current->next;
+        }
+        printf("\n");
     }
 }
 // Function to initialize a sample deck
@@ -335,26 +355,7 @@ void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
     }
 }
 //will arrange deck according to Figure 5
-void rearrangeDeck(ListNode* columns[]) {
-    //ListNode* columns[7] = { NULL };
-    for (int i = 0; i < 7; i++) {
-        printf("C%d\t", i + 1); // Print column header
 
-        // Print elements of the current column
-        ListNode* current = columns[i];
-        int count = 0;
-        while (current != NULL) {
-            printf("[%c%c]\t", current->card.rank, current->card.suit);
-            count++;
-            // Start a new row after every 7 elements
-            if (count % 7 == 0)
-                printf("\n");
-            // Move to the next node
-            current = current->next;
-        }
-        printf("\n");
-    }
-}
 // Helper-function to print the deck
 void printDeck(Card deck[]) {
     for (int i = 0; i < 52; i++) {
@@ -460,9 +461,9 @@ int main() {
     processSW(columns);
 
     // Assuming 'columns' array is initialized and populated
-    ListNode* columns[7] = { NULL }; // Initialize columns array with NULL pointers
+//    ListNode* columns[7] = { NULL }; // Initialize columns array with NULL pointers
     // Populate 'columns' array with cards from 'deck' array using distributeDeckToColumns function
-    rearrangeDeck(columns);
+//    rearrangeDeck(columns);
 
     // Printing sample deck
     printf("Original deck:\n");
