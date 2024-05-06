@@ -660,7 +660,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processL(argument);
     } else {
-        strncpy(message, "Error: Command Not Found or Invalid Arguments", MAX_MESSAGE_LENGTH);
+        strncpy(message, "Error: Command Invalid", MAX_MESSAGE_LENGTH);
     }
 }
 
