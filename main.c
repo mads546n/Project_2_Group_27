@@ -309,243 +309,159 @@ void shuffleDeck(Card deck[]) {
 }
 
 // Function to validate a performed move in accordance with the rules of Solitaire
-bool validateMove(char* source, char* destination, ListNode* columns[], FoundationNode foundations[]) {
-    // Parse source and destination for columns
-    //source[1] - '0';
-//    char *ptr = source;
-    int sourceColumn = source[1]-'0';
+bool validateMove(char sourceType, int sourceIndex, char destinationType, int destinationIndex, ListNode* columns, FoundationNode* foundations[]) {
+    // Validate a move based on the type of source and destination
 
-//    int sourceColumn = atoi(source + 1);
-    int destinationColumn = atoi(destination + 1 );
-//    printf("Destination is: %s\t", destination);
-//    printf("destinationColumn is: %d\t", destinationColumn);
-
-
-    // Parse source and destination for foundations
-    int sourceFoundation = source[1]-'0';
-    int destinationFoundation = atoi(destination + 1);
-
-    printf("Source Column: %d, Destination Column: %d\n", sourceColumn, destinationColumn);
-    printf("Source Foundation: %d, Destination Foundation: %d\n", sourceFoundation, destinationFoundation);
-
-    // Perform check if source column exists
-    if (source[0] == 'C') {
-        if (sourceColumn < 1 || sourceColumn > 7) {
-            printf("Invalid source column\n");
-            return false; // If lower than 1 or exceeding 7, not an actual column
+    // From column to column
+    if (sourceType == 'C' && destinationType == 'C') {
+        if (sourceIndex < 0 || sourceIndex >= 7 || destinationIndex < 0 ||destinationIndex >= 7) {
+            printf("Invalid source- or destination column index\n");
+            return false;
         }
 
-        // Define the top card in source column
-        ListNode* sourceColumnTopCard = columns[sourceColumn - 1];
-        if (sourceColumnTopCard == NULL) {
-            printf("Source column is empty\n");
-            return false; // Then the source column would be empty
-        }
-    } else if (source[0] == 'F') {
-        if (sourceFoundation < 1 || sourceFoundation > 4) {
-            printf("Invalid source foundation\n");
-            return false;  // Not a valid source foundation
+        // Implement rules for checking if card from the source column is able to be placed on top of the destination column
+        return true; // Returns true as of now
+
+        // from column to foundation
+    } else if (sourceType == 'C' && destinationType == 'F') {
+        if (sourceIndex < 0 || sourceIndex >= 7 || destinationIndex < 0 ||destinationIndex >= 4) {
+            printf("Invalid source- or destination column/foundation index\n");
+            return false;
         }
 
-        // Define the top card in source foundation
-        FoundationNode* sourceFoundationTopCard = &foundations[sourceFoundation - 1];
-        if (sourceFoundationTopCard == NULL) {
-            printf("Source foundation is empty\n");
-            return false; // The foundation would be empty
+        // Implement rules here as well
+        return true; // Returns true as of now
+
+        // From foundation to column
+    } else if (sourceType == 'F' && destinationType == 'C') {
+        if (sourceIndex < 0 || sourceIndex >= 4 || destinationIndex < 0 ||destinationIndex >= 7) {
+            printf("Invalid source foundation or destination column index\n");
+            return false;
         }
+
+        // Implement rules here too
+        return true; // For now
+
+        // If none of the rules are obeyed
     } else {
-        printf("Invalid source type\n");
-        return true; // Invalid type of source
-    }
-
-    // Perform check if destination column exists
-    if (destination[0] == 'C') {
-        if (destinationColumn < 1 || destinationColumn > 7) {
-            printf("Invalid destination column\n");
-            return false; // Invalid destination column
-        }
-    } else if (destination[0] == 'F') {
-        if (destinationFoundation < 1 || destinationFoundation > 4) {
-            printf("Invalid destination foundation\n");
-            return false; // Invalid destination foundation
-        }
-    }
-//    else {
-//        printf("Invalid destination type\n");
-//        return true; // Invalid type of destination
-//    }
-
-    // Validate the attempted move based on the source- and destination types
-    if (source[0] == 'C' && destination[0] == 'F') {
-        // Move from column to foundation
-        ListNode* sourceColumnTopCard = columns[sourceColumn - 1];
-        FoundationNode* destinationFoundationTopCard = &foundations[destinationFoundation - 1];
-        char* test = "woo";
-//        destinationFoundationTopCard = test;
-
-        while (destinationFoundationTopCard != NULL && destinationFoundationTopCard->next != NULL) {
-            destinationFoundationTopCard = destinationFoundationTopCard->next;
-        }
-
-        // Check if card from column can be moved to foundation
-        if (sourceColumnTopCard->card.rank == destinationFoundationTopCard->card.rank + 1 &&
-        sourceColumnTopCard->card.suit == destinationFoundationTopCard->card.suit) {
-            printf("Valid move from column to foundation\n");
-            return true; // Valid move
-        } else {
-            printf("Invalid move from column to foundation\n");
-            return false; // Invalid move
-        }
-
-    } else if (source[0] == 'F' && destination[0] == 'C') {
-        // Move from foundation to column
-        FoundationNode* sourceFoundationTopCard = &foundations[sourceFoundation - 1];
-        ListNode* destinationColumnTopCard = columns[destinationColumn - 1];
-
-        // Check if card from foundation can be moved to column
-        if (sourceFoundationTopCard->card.rank == destinationColumnTopCard->card.rank - 1 &&
-            (sourceFoundationTopCard->card.suit == 'C' || sourceFoundationTopCard->card.suit == 'S') &&
-            (destinationColumnTopCard->card.suit == 'H' || destinationColumnTopCard->card.suit == 'D')) {
-            printf("Valid move from foundation to column\n");
-            return true; // Valid move
-
-        } else if (sourceFoundationTopCard->card.rank == destinationColumnTopCard->card.rank - 1 &&
-                (sourceFoundationTopCard->card.suit == 'H' || sourceFoundationTopCard->card.suit == 'D') &&
-                (destinationColumnTopCard->card.suit == 'C' || destinationColumnTopCard->card.suit == 'S')) {
-            printf("Valid move from foundation to column\n");
-            return true; // Valid move
-        } else {
-            printf("Invalid move from foundation to column\n");
-            return false; // Invalid move
-        }
-    } else {
-        printf("Valid move??\n");
-        // Invalid move entirely
-        return true;
+        // It's an invalid move
+        printf("Invalid move: Not possible to move from %c%d to %c%d\n", sourceType, sourceIndex, destinationType, destinationIndex);
+        return false;
     }
 }
 
 // function to perform move if move is deemed "valid"
-bool performMove(char* source, char* destination, ListNode* columns[], FoundationNode* foundations[]) {
-    // Validate the move using the validateMove-function
-//    if (!validateMove(source, destination, columns, (FoundationNode *) foundations)) {
-//        printf("performMove Invalid move\n");
-//        return false;
-//    }
+bool performMove(char sourceType, int sourceIndex, char destinationType, int destinationIndex, ListNode* columns[], FoundationNode* foundations[]) {
+    // Perform the attempted move if the move is valid according to the rules specified in validateMove
+    if (validateMove(sourceType, sourceIndex, destinationType, destinationIndex, /*LOOK HERE IF POINTER FAILURE*/ *columns, foundations)) {
 
-    // Parse the source and destination for columns
-    int sourceColumn = source[1]-'0';
-    int destinationColumn = atoi(destination + 1);
+        // Get the card that we need to move from the source-location
+        Card cardToMove;
 
-    // Parse the source and destination for foundations
-    int sourceFoundation = source[1]-'0';
-    int destinationFoundation = atoi(destination + 1);
+        // If moving from a column
+        if (sourceType == 'C') {
+            ListNode* sourceColumn = columns[sourceIndex];
 
-    printf("Source Column: %d, Destination Column: %d\n", sourceColumn, destinationColumn);
-    printf("Source Foundation: %d, Destination Foundation: %d\n", sourceFoundation, destinationFoundation);
+            // Catch if the source column is empty
+            if (sourceColumn == NULL) {
+                printf("Source column is empty\n");
+                return false;
+            }
 
-    // Check what "sort" of move to perform
+            // If the column isn't empty then we must remove the card from the source column
+            cardToMove = sourceColumn->card;
+            columns[sourceIndex] = sourceColumn->next;
 
-    // If source = column && destination = foundation
-    if (source[0] == 'C' && destination[0] == 'F') {
-        ListNode* sourceColumnTopCard = columns[sourceColumn - 1];
-        FoundationNode* destinationFoundationTopCard = foundations[destinationFoundation - 1];
+            // Free the allocated memory
+            free(sourceColumn);
 
-        // Update the foundation with top card from column
-        destinationFoundationTopCard->next = (FoundationNode*)malloc(sizeof(FoundationNode));
-        destinationFoundationTopCard = destinationFoundationTopCard->next;
-        destinationFoundationTopCard->card = sourceColumnTopCard->card;
-        destinationFoundationTopCard->next = NULL;
+        // If moving from a foundation
+        } else if (sourceType == 'F') {
+            FoundationNode* sourceFoundation = foundations[sourceIndex];
 
-        sourceColumnTopCard->next = (ListNode *)malloc(sizeof(ListNode));
-        sourceColumnTopCard = sourceColumnTopCard->next;
-        sourceColumnTopCard->card = destinationFoundationTopCard->card;
-        sourceColumnTopCard->next = NULL;
+            // Catch if source foundation is empty
+            if (sourceFoundation == NULL) {
+                printf("Source foundation is empty\n");
+                return false;
+            }
 
-        // Remove the top card from the column
-        columns[sourceColumn - 1] = sourceColumnTopCard->next;
-        free(sourceColumnTopCard);
-        free(destinationFoundationTopCard);
+            // If the foundation isn't empty, then move the card
+            cardToMove = sourceFoundation->card;
+            foundations[sourceIndex] = sourceFoundation->next;
 
-        // Print message showcasing move was successful
-        printf("Move from %s to %s was successful\n", source, destination);
+            // Free allocated memory
+            free(sourceFoundation);
+        }
+
+        // Now we insert the card into the given destination
+
+        // If destination is a column
+        if (destinationType == 'C') {
+            ListNode* newCardNode = (ListNode*)malloc(sizeof(ListNode));
+
+            // Catch if memory allocation is unsuccessful
+            if (newCardNode == NULL) {
+                printf("Memory allocation failed\n");
+                return false;
+            }
+            newCardNode->card = cardToMove;
+            newCardNode->next = columns[destinationIndex];
+            columns[destinationIndex] = newCardNode;
+
+            // IF MEMORY ERROR LOOK HERE
+            free(newCardNode);
+
+        // If destination is a foundation
+        } else if (destinationType == 'F') {
+            FoundationNode* newCardNode = (FoundationNode*)malloc(sizeof(FoundationNode));
+
+            // Catch if memory allocation is unsuccessful
+            if (newCardNode == NULL) {
+                printf("Memory allocation failed\n");
+                return false;
+            }
+            newCardNode->card = cardToMove;
+            newCardNode->next = foundations[destinationIndex];
+            foundations[destinationIndex] = newCardNode;
+
+            // IF MEMORY ERROR LOOK HERE
+            free(newCardNode);
+        }
+
+        // If the move was successful
+        printf("Moved card successfully from %c%d to %c%d\n", sourceType, sourceIndex, destinationType, destinationIndex);
         return true;
-    }
 
-    // if source = foundation && destination = column
-    else if (source[0] == 'F' && destination[0] == 'C') {
-        FoundationNode* sourceFoundationTopCard = foundations[sourceFoundation -1];
-        ListNode* destinationColumnTopCard = columns[destinationColumn - 1];
-
-        // Update the column with top card from foundation
-        ListNode* newCardNode = (ListNode*)malloc(sizeof(ListNode));
-        newCardNode->card = sourceFoundationTopCard->card;
-        newCardNode->next = destinationColumnTopCard;
-        columns[destinationColumn - 1] = newCardNode;
-
-        // Remove the top card from foundation
-        foundations[sourceFoundation - 1] = foundations[sourceFoundation - 1]->next;
-        free(newCardNode);
-
-        // Print message
-        printf("Move from %s to %s was successful\n", source, destination);
-        return true;
-    }
-    else if (source[0] == 'C' && destination[0] == 'C') {
-        ListNode* sourceColumnTopCard = columns[sourceColumn - 1];
-        ListNode* destinationColumnTopCard = columns[destinationColumn - 1];
-
-        // Update the column with top card from column.
-        ListNode* newCardNode = (ListNode*)malloc(sizeof(ListNode));
-        newCardNode->card = sourceColumnTopCard->card;
-        newCardNode->next = destinationColumnTopCard;
-        columns[destinationColumn - 1] = newCardNode;
-
-        // Remove the top card from column
-        columns[sourceColumn - 1] = sourceColumnTopCard->next;
-        free(newCardNode);
-
-        // Print message
-        printf("Move from %s to %s was successful\n", source, destination);
-        return true;
-    }
-
-    // If move is not from column to foundation or foundation to column
-    else {
-        printf("If move is not from column to foundation or foundation to column\n");
+        // If move wasn't successful
+    } else {
+        printf("Move from %c%d to %c%d failed\n", sourceType, sourceIndex, destinationType, destinationIndex);
         return false;
     }
 }
 
 // Function to process a given command for moving cards
-void processMoveCommand(char moveCommand[], ListNode* columns[], FoundationNode* foundations[], char* message) {
-    // Extract source and destination from the attempted moveCommand
-    char source[5];
-    char card[3];
-    char destination[3];
-    if (sscanf(moveCommand, "%4[^:]:%2[^->]->%2s", source, card, destination) != 3) {
-        strncpy(message, "Error: Invalid move command", MAX_COMMAND_LENGTH);
+void processMoveCommand(char* command, ListNode* columns[], FoundationNode* foundations[]) {
+    // First we parse the command after the format (column) : (cardToBeMoved) -> (destination)
+    char sourceType, destinationType;
+    int sourceIndex, destinationIndex;
+    char cardRank, cardSuit;
+
+    // If condition to check if command is of appropriate length and format
+    if (sscanf(command, "%c%d:%c%c->%c%d", &sourceType, &sourceIndex, &cardRank, &cardSuit, &destinationType, &destinationIndex) != 6) {
+        printf("Invalid command format\n");
         return;
     }
 
-    strcat(source, card);
+    // If the command-format is correct and of correct length
+    Card cardToMove;
+    cardToMove.rank = cardRank;
+    cardToMove.suit = cardSuit;
 
-    printf("Source: %s, Card: %s, Destination: %s\n", source, card, destination);
+    // Call to the performMove function
+    if (!performMove(sourceType, sourceIndex, destinationType, destinationIndex, columns, foundations)) {
 
-    // Validate the move
-    bool isValidMove = validateMove(source, destination, columns, *foundations);
-
-    printf("Validation Result: %d\n", isValidMove);
-
-    if (isValidMove) {
-        // If condition = true, perform move
-        performMove(source, destination, columns, foundations);
-
-        // Return "OK" message
-        strncpy(message, "OK", sizeof(*message));
-    } else {
-        // Return an error message indicating move = not valid
-        strncpy(message, "Error: Invalid Move", sizeof(*message));
+        // if the condition is true, then the move was not able to be performed
+        printf("Move failed\n");
     }
 }
 
@@ -704,7 +620,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 if(test >=1 && test <=7 ){
                     strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
                     //Call relevant method here.
-                    processMoveCommand(command, columns, foundations, message);
+                    processMoveCommand(command, columns, foundations);
                 }
                 break;
             case 'F':
@@ -712,7 +628,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 if(test >=1 && test <=4 ){
                     strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
                     //Call relevant method here.
-                    processMoveCommand(command, columns, foundations, message);
+                    processMoveCommand(command, columns, foundations);
                 }
                 break;
             default:
