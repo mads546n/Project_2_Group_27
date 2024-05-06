@@ -99,6 +99,46 @@ void printList(struct Deck* head){
     }
 }
 
+void rearrangeDeck(ListNode* columns[]) {
+    // Print column headers
+    printf("C1\tC2\tC3\tC4\tC5\tC6\tC7\n");
+
+    // Find the maximum number of elements among all columns
+    int maxRowCount = 0;
+    for (int i = 0; i < 7; i++) {
+        ListNode* current = columns[i];
+        int count = 0;
+        while (current != NULL) {
+            count++;
+            current = current->next;
+        }
+        if (count > maxRowCount) {
+            maxRowCount = count;
+        }
+    }
+
+    // Print elements row by row
+    for (int row = 0; row < maxRowCount; row++) {
+        for (int col = 0; col < 7; col++) {
+            ListNode* current = columns[col];
+            // Move to the row-th node
+            for (int i = 0; i < row; i++) {
+                if (current != NULL) {
+                    current = current->next;
+                }
+            }
+            if (current != NULL) {
+                printf("[%c%c]\t", current->card.rank, current->card.suit);
+                columns[col] = current->next; // Move to the next node for the next row
+            } else {
+                printf("\t"); // If no element in this column for this row, print empty
+            }
+        }
+        printf("\n");
+    }
+}
+
+
 
 // Function to initialize a sample deck
 void load(Card deck[], char* filename) {
@@ -134,7 +174,7 @@ void processLD(char* filename) {
     load(deck, filename);
 }
 void processSW() {
-    printf("Placeholder function for SW startDeck\n");
+    rearrangeDeck(columns);
 }
 
 void processSI(char* argument) {
