@@ -650,7 +650,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
             strcmp(command, "U") == 0 ||
             strcmp(command, "R") == 0 ||
             strcmp(command, "S") == 0 ||
-            strcmp(command, "L") == 0) {
+            strcmp(command, "L") == 0 || strcmp(command, "QQ") == 0) {
             // If the input startDeck is valid, update the message
             strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
 
@@ -671,7 +671,10 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                     processU();
                     break;
                 case 'Q':
-                    processQ();
+                    if (command[0] == 'Q' && command[1] == 'Q')
+                        processQQ();
+                    else
+                        processQ();
                     break;
                 case 'P':
                     processP();
