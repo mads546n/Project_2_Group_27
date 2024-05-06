@@ -138,11 +138,23 @@ void processSW() {
 }
 
 void processSI(char* argument) {
-    printf("Placeholder function for SI startDeck\n");
+    int splitIndex = atoi(argument);
+    if (splitIndex < 1 || splitIndex > 51) {
+        printf("Invalid split index\n");
+        return;
+    }
+    Card* newDeck = split(deck, splitIndex);
+    if (newDeck != NULL) {
+        memcpy(deck, newDeck, sizeof(Card) * 52); // Copy the new deck back to the main deck
+        free(newDeck); // Assume split allocates memory for a new deck
+        printf("Deck split at %d and interleaved\n", splitIndex);
+    } else {
+        printf("Failed to split and interleave the deck\n");
+    }
 }
 
 void processSR() {
-    printf("Placeholder function for SR startDeck\n");
+    shuffleDeck(deck);
 }
 
 void processSD(char* argument) {
@@ -175,9 +187,6 @@ void processQ() {
     }
 
 
-
-
-    printf("Placeholder function for Q startDeck\n");
 }
 
 void processU() {
@@ -189,7 +198,7 @@ void processR() {
 }
 
 void processS(char* argument) {
-    printf("Placeholder function for S startDeck\n");
+    saveDecktoFile(deck, argument);
 }
 
 void processL(char* argument) {
