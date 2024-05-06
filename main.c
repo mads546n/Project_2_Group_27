@@ -279,57 +279,49 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
     char command[MAX_COMMAND_LENGTH];
     char argument[MAX_COMMAND_LENGTH];
-    sscanf(input, "%s %s", command, argument);
+    int numParsed = sscanf(lastCommand, "%s %99[^\n]", command, argument); // Parse command and possibly an argument
 
-    if (strcmp(command, "LD") == 0) {
+    // Check commands
+    if (strcmp(command, "LD") == 0 && numParsed == 2) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processLD(argument);
-    }
-    else if (strcmp(command, "SW") == 0) {
+    } else if (strcmp(command, "SW") == 0 && numParsed == 1) { // No arguments should be parsed for "SW"
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processSW();
-    }
-    else if (strcmp(command, "SI") == 0) {
+    } else if (strcmp(command, "SI") == 0 && numParsed == 2) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processSI(argument);
-    }
-    else if (strcmp(command, "SR") == 0) {
+    } else if (strcmp(command, "SR") == 0 && numParsed == 1) { // Assuming no arguments for "SR"
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processS(argument);  // Assuming 'processSR' is typo, change as necessary
-    }
-    else if (strcmp(command, "SD") == 0) {
+        processSR();
+    } else if (strcmp(command, "SD") == 0 && numParsed == 2) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processS(argument);  // Assuming 'processSD' is typo, change as necessary
-    }
-    else if (strcmp(command, "P") == 0) {
+        processSD(argument);
+    } else if (strcmp(command, "P") == 0 && numParsed == 1) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processP();
-    }
-    else if (strcmp(command, "Q") == 0) {
+    } else if (strcmp(command, "Q") == 0 && numParsed == 1) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processQ();
-    }
-    else if (strcmp(command, "U") == 0) {
+    } else if (strcmp(command, "U") == 0 && numParsed == 1) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processU();
-    }
-    else if (strcmp(command, "R") == 0) {
+    } else if (strcmp(command, "R") == 0 && numParsed == 1) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processR();
-    }
-    else if (strcmp(command, "S") == 0) {
+    } else if (strcmp(command, "S") == 0 && numParsed == 2) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processS(argument);
-    }
-    else if (strcmp(command, "L") == 0) {
+    } else if (strcmp(command, "L") == 0 && numParsed == 2) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processL(argument);
+    } else {
+        strncpy(message, "Error: Command Not Found or Invalid Arguments", MAX_MESSAGE_LENGTH);
+        printf("Invalid command or incorrect number of arguments\n");
     }
-    else {
-        strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
-    }
-
 }
+
+
 // Function to distribute a given card deck along the columns
 void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
     bool cardAdded[52] = { false };
