@@ -281,55 +281,52 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     char argument[MAX_COMMAND_LENGTH];
     sscanf(input, "%s %s", command, argument);
 
-    if (strcmp(command, "LD") == 0 ||
-        strcmp(command, "SW") == 0 ||
-        strcmp(command, "SI") == 0 ||
-        strcmp(command, "SR") == 0 ||
-        strcmp(command, "SD") == 0 ||
-        strcmp(command, "P") == 0 ||
-        strcmp(command, "Q") == 0 ||
-        strcmp(command, "U") == 0 ||
-        strcmp(command, "R") == 0 ||
-        strcmp(command, "S") == 0 ||
-        strcmp(command, "L") == 0) {
-        // If the input startDeck is valid, update the message
+    if (strcmp(command, "LD") == 0) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-
-        switch (command[0]) {
-            case 'L':
-                if (command[1] == 'D')
-                    processLD(argument);
-                else if (command[1] == '\000')
-                    processL(argument);
-                break;
-            case 'S':
-                processS(argument);
-                break;
-            case 'R':
-                processR();
-                break;
-            case 'U':
-                processU();
-                break;
-            case 'Q':
-                processQ();
-                break;
-            case 'P':
-                processP();
-                break;
-            case 'I':
-                if (command[1] == 'I')
-                    processSI(argument);
-                break;
-            case 'W':
-                processSW();
-                break;
-            default:
-                // Error: Command not found
-                strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
-
-
-        }
+        processLD(argument);
+    }
+    else if (strcmp(command, "SW") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSW();
+    }
+    else if (strcmp(command, "SI") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSI(argument);
+    }
+    else if (strcmp(command, "SR") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processS(argument);  // Assuming 'processSR' is typo, change as necessary
+    }
+    else if (strcmp(command, "SD") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processS(argument);  // Assuming 'processSD' is typo, change as necessary
+    }
+    else if (strcmp(command, "P") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processP();
+    }
+    else if (strcmp(command, "Q") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processQ();
+    }
+    else if (strcmp(command, "U") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processU();
+    }
+    else if (strcmp(command, "R") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processR();
+    }
+    else if (strcmp(command, "S") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processS(argument);
+    }
+    else if (strcmp(command, "L") == 0) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processL(argument);
+    }
+    else {
+        strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
     }
 
 }
