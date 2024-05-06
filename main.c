@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include<unistd.h>
-#include <assert.h>
+
 
 //Linked list structure.
 struct Deck {
@@ -17,8 +17,6 @@ struct Deck {
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
-#define MAX_CARD_LENGTH 3
-#define MAX_FILENAME_LENGTH 100
 
 typedef struct Card {
     char rank;
@@ -671,71 +669,58 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     sscanf(input, "%s %s", command, argument);
 
 
-    if (strcmp(command, "LD") == 0 ||
-        strcmp(command, "SW") == 0 ||
-        strcmp(command, "SI") == 0 ||
-        strcmp(command, "SR") == 0 ||
-        strcmp(command, "SD") == 0 ||
-        strcmp(command, "P") == 0 ||
-        strcmp(command, "Q") == 0 ||
-        strcmp(command, "U") == 0 ||
-        strcmp(command, "R") == 0 ||
-        strcmp(command, "S") == 0 ||
-        strcmp(command, "L") == 0 || strcmp(command, "QQ") == 0) {
-        // If the input startDeck is valid, update the message
+    int numParsed = sscanf(lastCommand, "%s %99[^\n]", command, argument);
+
+    // Handling commands based on playPhase directly in the conditions
+    if (strcmp(command, "P") == 0 && numParsed == 1 && !playmode) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processP();
+        playmode = true; // Entering play phase
+    } else if (strcmp(command, "LD") == 0 && numParsed == 2 && !playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processLD(argument);
 
-        switch (command[0]) {
+    } else if (strcmp(command, "SW") == 0 && numParsed == 1 && !playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSW();
 
-                case 'L':
-                if (command[1] == 'D' &&  !playmode)
-                    processLD(argument);
-                else if (!playmode)
-                    processL(argument);
-                break;
-                case 'S':
-                    if (playmode)
-                    processS(argument);
-                    else if (command[1] == 'R' && !playmode)
-                        processSR();
-                    else if (command[1] == 'D' && !playmode)
-                        processSD(argument);
-                    break;
-                case 'R':
-                    if (playmode)
-                    processR();
-                    break;
-                case 'U':
-                    if (playmode)
-                    processU();
-                    break;
-                case 'Q':
-                    if (command[0] == 'Q' && command[1] == 'Q')
-                        processQQ();
-                    else if (command[0] == 'Q' && playmode)
-                        processQ();
-                    break;
-                case 'P':
-                    if (!playmode)
-                    processP();
-                    playmode = true;
-                    break;
-                case 'I':
-                    if (command[1] == 'I' && !playmode)
-                        processSI(argument);
-                    break;
-                case 'W':
-                    if (!playmode)
-                    processSW();
-                    break;
-                default:
-                    // Error: Command not found
-                    strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
-            }
-        }
+    } else if (strcmp(command, "SI") == 0 && numParsed == 2 && !playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSI(argument);
 
-//printf("%d", strcmp(command, "F"));
-//    printf("%d", strcmp(command, "C"));
+    } else if (strcmp(command, "SR") == 0 && numParsed == 1 && !playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSR();
+
+    } else if (strcmp(command, "SD") == 0 && numParsed == 2 && !playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSD(argument);
+
+    } else if (strcmp(command, "Q") == 0 && numParsed == 1 && playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processQ();
+
+    } else if (strcmp(command, "U") == 0 && numParsed == 1 && playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processU();
+
+    } else if (strcmp(command, "R") == 0 && numParsed == 1 && playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processR();
+
+    } else if (strcmp(command, "S") == 0 && numParsed == 2 && playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processS(argument);
+
+    } else if (strcmp(command, "L") == 0 && numParsed == 2 && playmode) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processL(argument);
+
+    } else if (strcmp(command, "QQ") == 0 && numParsed == 1) {
+        processQQ();
+    } else {
+        strncpy(message, "Error: Command Invalid", MAX_MESSAGE_LENGTH);
+    }
 
     if (playmode&&(strncmp(command, "C", 1) == 0 || strncmp(command, "F", 1) == 0)){
         int test = 0;
