@@ -14,6 +14,8 @@ struct Deck {
     struct Deck* next;
 };
 
+
+
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
@@ -39,6 +41,7 @@ typedef struct FoundationNode {
 Card deck[52];
 ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
+bool playPhase = false;
 
 bool playmode = false;
 
@@ -620,7 +623,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
     char command[MAX_COMMAND_LENGTH];
     char argument[MAX_COMMAND_LENGTH];
-    sscanf(input, "%s %s", command, argument);
+    int numParsed = sscanf(lastCommand, "%s %99[^\n]", command, argument);
 
     if (!playmode) {
         if (strcmp(command, "LD") == 0 ||
@@ -670,10 +673,78 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 default:
                     // Error: Command not found
                     strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
+    // Handling commands based on playPhase directly in the conditions
+    if (strcmp(command, "P") == 0 && numParsed == 1 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processP();
+        playPhase = true; // Entering play phase
+    } else if (strcmp(command, "LD") == 0 && numParsed == 2 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processLD(argument);
+    } else if (strcmp(command, "SW") == 0 && numParsed == 1 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSW();
+    } else if (strcmp(command, "SI") == 0 && numParsed == 2 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSI(argument);
+    } else if (strcmp(command, "SR") == 0 && numParsed == 1 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSR();
+    } else if (strcmp(command, "SD") == 0 && numParsed == 2 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSD(argument);
+    } else if (strcmp(command, "Q") == 0 && numParsed == 1 && playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processQ();
+        playPhase = false; // Optionally reset play phase
+    } else if (strcmp(command, "U") == 0 && numParsed == 1 && playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processU();
+    } else if (strcmp(command, "R") == 0 && numParsed == 1 && playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processR();
+    } else if (strcmp(command, "S") == 0 && numParsed == 2 && playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processS(argument);
+    } else if (strcmp(command, "L") == 0 && numParsed == 2 && playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processL(argument);
+    } else {
+        strncpy(message, "Error: Command Not Found or Invalid Arguments", MAX_MESSAGE_LENGTH);
+    }
+}
 
 
+
+// Function to distribute a given card deck along the columns
+void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
+    bool cardAdded[52] = { false };
+    int index = 0;
+    for (int i = 0; i < 7; i++) {
+        ListNode* currentColumn = NULL;
+        int cardsToAdd = (i == 0) ? 1 : i + 5; // Determine number of cards to be distributed in each column
+        for (int j = 0; j < cardsToAdd && index < 52; j++) {
+            while (index < 52 && cardAdded[index]) {
+                index++;
+            }
+            if (index < 52) {
+                ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
+                if (newNode == NULL) {
+                    fprintf(stderr,"Memory allocation failed\n");
+                    while (currentColumn != NULL) {
+                        ListNode* temp = currentColumn;
+                        currentColumn = currentColumn->next;
+                        free(temp);
+                    }
+                    return;
+                }
+                newNode->card = deck[index];
+                newNode->next = currentColumn;
+                currentColumn = newNode;
+                cardAdded[index] = true;
             }
         }
+        columns[i] = currentColumn;
     }
 //printf("%d", strcmp(command, "F"));
 //    printf("%d", strcmp(command, "C"));
@@ -702,13 +773,99 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 // Error: Command not found
                 strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
 
-
-        }
+// Function to "split" a deck of cards after "split" amount of cards iterated through and interleave into shuffled deck
+Card* split(Card deck[], int split) {
+    // Allocate memory for the new shuffled deck
+    Card* shuffledDeck = (Card*)malloc(52 * sizeof(Card));
+    if (shuffledDeck == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
     }
 
+    // Create piles dependent on the split and generate a random split-value if none is provided
+    Card* pile1;
+    Card* pile2;
 
+    if (split > 0 && split < 52) {
+        pile1 = deck;
+        pile2 = deck + split;
+    } else {
+        srand(time(NULL)); // Seed the random number generator
+        split = rand() % 52; // Generate a random split
+        pile1 = deck;
+        pile2 = deck + split;
+    }
 
+    printf("Pile1\n");
+    printDeck(pile1);
+    printf("\n");
+
+    printf("Pile2\n");
+    printDeck(pile2);
+    printf("\n");
+
+    // Index variables for iterating through piles a card at a time
+    int index1 = 0;
+    int index2 = 0;
+    int shuffledIndex = 0;
+
+    // Interleave cards from the two piles into the shuffled deck
+    while (index1 < split && index2 < 52 - split) {
+        shuffledDeck[shuffledIndex++] = pile1[index1++];
+        shuffledDeck[shuffledIndex++] = pile2[index2++];
+    }
+
+    // If there are remaining cards in pile1 or pile2, we add them to the shuffled deck
+    while (index1 < split) {
+        shuffledDeck[shuffledIndex++] = pile1[index1++];
+    }
+
+    while (index2 < 52 - split) {
+        shuffledDeck[shuffledIndex++] = pile2[index2++];
+    }
+
+    return shuffledDeck;
 }
+
+// Function to shuffle a deck using the Fisher-Yates shuffling-algorithm
+void shuffleDeck(Card deck[]) {
+    //Initialize an int value to keep track of the number of cards in the deck
+    int numCards = 50;
+
+    // Initialize the shuffled deck
+    Card shuffledDeck[numCards];
+
+    // Initialize a random seed
+    srand(time(NULL));
+
+    // Integer to store the size of the unshuffled pile
+    int unshuffledSize = numCards;
+
+    // Loop to iterate through cards
+    for (int i = 0; i < numCards; i++) {
+        // Select a random index in the unshuffled pile
+        int randomIndex = rand() % unshuffledSize;
+
+        // The random index is attributed to a random card and moved to the shuffled deck
+        shuffledDeck[i] = deck[randomIndex];
+
+        // The selected card is then replaced with top card from the unshuffled pile
+        deck[randomIndex] = deck[unshuffledSize - 1];
+
+        // Decrement size of unshuffled pile
+        unshuffledSize--;
+    }
+
+    // Update our deck to match the shuffled deck
+    for (int i = 0; i < numCards; i++) {
+        deck[i] = shuffledDeck[i];
+    }
+}
+
+
+
+
+
 
 int main() {
     // Initialize a deck
