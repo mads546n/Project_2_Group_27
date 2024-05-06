@@ -156,6 +156,26 @@ void processP() {
 }
 
 void processQ() {
+    playmode = false;
+    load(deck, "shuffled_deck.txt");
+    for(int i = 0; i < 7; i++) {
+        while (columns[i] != NULL) {
+            ListNode* toDelete = columns[i];
+            columns[i] = columns[i]->next;
+            free(toDelete);
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        while (foundations[i] != NULL) {
+            FoundationNode* toDelete = foundations[i];
+            foundations[i] = foundations[i]->next;
+            free(toDelete);
+        }
+    }
+
+
+
+
     printf("Placeholder function for Q startDeck\n");
 }
 
@@ -673,7 +693,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 case 'Q':
                     if (command[0] == 'Q' && command[1] == 'Q')
                         processQQ();
-                    else
+                    else if (command[0] == 'Q')
                         processQ();
                     break;
                 case 'P':
@@ -729,6 +749,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
 
 }
+
 
 // Function to save
 void saveDeckToFile(Card deck[], char* filename) {
