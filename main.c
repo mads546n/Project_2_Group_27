@@ -20,6 +20,7 @@ struct Deck {
 #define MAX_CARD_LENGTH 3
 #define MAX_FILENAME_LENGTH 100
 
+
 typedef struct Card {
     char rank;
     char suit;
@@ -39,6 +40,7 @@ typedef struct FoundationNode {
 Card deck[52];
 ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
+bool playPhase = false;
 
 // Define placeholder functions for each startDeck
 //bool isDuplicate(Card deck[], int size, Card card) {
@@ -279,47 +281,49 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
     char command[MAX_COMMAND_LENGTH];
     char argument[MAX_COMMAND_LENGTH];
-    int numParsed = sscanf(lastCommand, "%s %99[^\n]", command, argument); // Parse command and possibly an argument
+    int numParsed = sscanf(lastCommand, "%s %99[^\n]", command, argument);
 
-    // Check commands
-    if (strcmp(command, "LD") == 0 && numParsed == 2) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processLD(argument);
-    } else if (strcmp(command, "SW") == 0 && numParsed == 1) { // No arguments should be parsed for "SW"
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processSW();
-    } else if (strcmp(command, "SI") == 0 && numParsed == 2) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processSI(argument);
-    } else if (strcmp(command, "SR") == 0 && numParsed == 1) { // Assuming no arguments for "SR"
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processSR();
-    } else if (strcmp(command, "SD") == 0 && numParsed == 2) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processSD(argument);
-    } else if (strcmp(command, "P") == 0 && numParsed == 1) {
+    // Handling commands based on playPhase directly in the conditions
+    if (strcmp(command, "P") == 0 && numParsed == 1 && !playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processP();
-    } else if (strcmp(command, "Q") == 0 && numParsed == 1) {
+        playPhase = true; // Entering play phase
+    } else if (strcmp(command, "LD") == 0 && numParsed == 2 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processLD(argument);
+    } else if (strcmp(command, "SW") == 0 && numParsed == 1 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSW();
+    } else if (strcmp(command, "SI") == 0 && numParsed == 2 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSI(argument);
+    } else if (strcmp(command, "SR") == 0 && numParsed == 1 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSR();
+    } else if (strcmp(command, "SD") == 0 && numParsed == 2 && !playPhase) {
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+        processSD(argument);
+    } else if (strcmp(command, "Q") == 0 && numParsed == 1 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processQ();
-    } else if (strcmp(command, "U") == 0 && numParsed == 1) {
+        playPhase = false; // Optionally reset play phase
+    } else if (strcmp(command, "U") == 0 && numParsed == 1 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processU();
-    } else if (strcmp(command, "R") == 0 && numParsed == 1) {
+    } else if (strcmp(command, "R") == 0 && numParsed == 1 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processR();
-    } else if (strcmp(command, "S") == 0 && numParsed == 2) {
+    } else if (strcmp(command, "S") == 0 && numParsed == 2 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processS(argument);
-    } else if (strcmp(command, "L") == 0 && numParsed == 2) {
+    } else if (strcmp(command, "L") == 0 && numParsed == 2 && playPhase) {
         strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
         processL(argument);
     } else {
         strncpy(message, "Error: Command Not Found or Invalid Arguments", MAX_MESSAGE_LENGTH);
-        printf("Invalid command or incorrect number of arguments\n");
     }
 }
+
 
 
 // Function to distribute a given card deck along the columns
