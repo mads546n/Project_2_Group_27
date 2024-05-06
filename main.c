@@ -690,51 +690,13 @@ void saveDeckToFile(Card deck[], char* filename) {
 
 int main() {
     // Initialize a deck
-
-
     load(deck, "../cards.txt");
-
-
-    // Printing sample deck
-    printf("Original deck:\n");
-    printDeck(deck);
-    printf("\n");
-
-    // Arrays of pointer to the head of each column and foundation
-
 
     char message[50] = "";
 
     char lastCommand[50] = "";
 
     bool isEmpty = true; // Flag to indicate if the game board is empty
-
-    printf("Shuffled deck: \n");
-    shuffleDeck(deck);
-    for (int i = 0; i < 52; i++) {
-        printf("[%c%c] ", deck[i].rank, deck[i].suit);
-    }
-    printf("\n");
-    printf("\n");
-
-    saveDeckToFile(deck, "shuffled_deck.txt");
-
-    Card loadedDeck[52];
-    load(loadedDeck, "shuffled_deck.txt");
-
-    bool decksMatch = true;
-    for (int i = 0; i < 52; i++) {
-        if (loadedDeck[i].rank != deck[i].rank || loadedDeck[i].suit != deck[i].suit) {
-            decksMatch = false;
-            break;
-        }
-    }
-
-    if (decksMatch) {
-        printf("Loaded deck matches shuffled deck\n");
-    } else {
-        printf("Loaded deck doesn't match shuffled deck\n");
-    }
 
     while (1) {
 
