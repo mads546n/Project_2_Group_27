@@ -421,6 +421,7 @@ bool performMove(char sourceType, int sourceIndex, char destinationType, int des
                 return false;
             }
             newCardNode->card = cardToMove;
+            printf("Card to move: %c%c\n", cardToMove.rank, cardToMove.suit);
             newCardNode->next = foundations[destinationIndex];
             foundations[destinationIndex] = newCardNode;
 
