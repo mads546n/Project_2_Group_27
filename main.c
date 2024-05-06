@@ -6,7 +6,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include<unistd.h>
-#include <assert.h>
 
 //Linked list structure.
 struct Deck {
@@ -664,7 +663,10 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                     processU();
                     break;
                 case 'Q':
-                    processQ();
+                    if (command[1] == 'Q')
+                        processQQ();
+                    else
+                        processQ();
                     break;
                 case 'P':
                     processP();
