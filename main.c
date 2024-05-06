@@ -597,7 +597,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     printf("\n");
 
     // Display last startDeck
-    printf("LAST startDeck: %s\n", lastCommand);
+    printf("LAST Command: %s\n", lastCommand);
 
     // Display message
     printf("Message: %s\n", message);
