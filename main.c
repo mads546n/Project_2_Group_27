@@ -14,8 +14,6 @@ struct Deck {
     struct Deck* next;
 };
 
-
-
 // Define maximum length for last startDeck and message
 #define MAX_COMMAND_LENGTH 100
 #define MAX_MESSAGE_LENGTH 100
@@ -41,7 +39,6 @@ typedef struct FoundationNode {
 Card deck[52];
 ListNode *columns[7] = {NULL};
 FoundationNode *foundations[4] = {NULL};
-bool playPhase = false;
 
 bool playmode = false;
 
@@ -92,38 +89,6 @@ void insertEnd(struct Deck** head, char* card){
     // make the next of the tail to the new Deck
     current->next = newNode;
 }
-void printList(struct Deck* head){
-    struct Deck* current = head;
-    while (current != NULL) {
-        printf("%s", current->card);
-        current = current->next;
-    }
-}
-
-//void startDeck (){
-//    int i = 1;
-//    struct Deck* head = NULL;
-//    //Checks for LD startDeck.
-//    //Checks if the LD startDeck has a path name.
-//    char *filename = "../model/cards.txt";
-//    FILE *fp = fopen(filename, "r");
-//    char ch[105];
-//    // Assigns the cards from the fget buffer into the array so they are saved and then assigns them to a linked list.
-//    bool first = true;
-//    while (fgets(ch, 105, fp) != NULL) {
-//        if (first) {
-//            strcpy(buffer[0], ch);
-//            insertStart(&head, buffer[0]);
-//            first = false;
-//        } else {
-//            strcpy(buffer[i], ch);
-//            insertEnd(&head, buffer[i++]);
-//        }
-//    }
-//}
-
-
-// Function to initialize a sample deck
 void load(Card deck[], char* filename) {
     int i = 1;
     struct Deck* head = NULL;
@@ -331,8 +296,12 @@ void shuffleDeck(Card deck[]) {
 // Function to validate a performed move in accordance with the rules of Solitaire
 bool validateMove(char* source, char* destination, ListNode* columns[], FoundationNode foundations[]) {
     // Parse source and destination for columns
-    int sourceColumn = atoi(source + 1);
-    int destinationColumn = atoi(destination + 1);
+    //source[1] - '0';
+    int sourceColumn = atoi(source + 1 );
+    int destinationColumn = atoi(destination + 1 );
+    printf("Destination is: %s", destination);
+    printf("destinationColumn is: %d", destinationColumn);
+
 
     // Parse source and destination for foundations
     int sourceFoundation = atoi(source + 1);
@@ -446,6 +415,7 @@ bool performMove(char* source, char* destination, ListNode* columns[], Foundatio
     // Parse the source and destination for columns
     int sourceColumn = atoi(source + 1);
     int destinationColumn = atoi(destination + 1);
+//    printf("Destination is: %s", destination);
 
     // Parse the source and destination for foundations
     int sourceFoundation = atoi(source + 1);
@@ -503,37 +473,7 @@ bool performMove(char* source, char* destination, ListNode* columns[], Foundatio
     }
 }
 
-// Function to process a given command for moving cards
-void processMoveCommand(char moveCommand[], ListNode* columns[], FoundationNode* foundations[], char* message) {
-    // Extract source and destination from the attempted moveCommand
-    char source[5];
-    char card[3];
-    char destination[3];
-    if (sscanf(moveCommand, "%4[^:]:%2[^->]->%2s", source, card, destination) != 3) {
-        strncpy(message, "Error: Invalid move command", MAX_COMMAND_LENGTH);
-        return;
-    }
 
-    strcat(source, card);
-
-    printf("Source: %s, Card: %s, Destination: %s\n", source, card, destination);
-
-    // Validate the move
-    bool isValidMove = validateMove(source, destination, columns, *foundations);
-
-    printf("Validation Result: %d\n", isValidMove);
-
-    if (isValidMove) {
-        // If condition = true, perform move
-        performMove(source, destination, columns, foundations);
-
-        // Return "OK" message
-        strncpy(message, "OK", sizeof(message));
-    } else {
-        // Return an error message indicating move = not valid
-        strncpy(message, "Error: Invalid Move", sizeof(message));
-    }
-}
 
 void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areColumnsEmpty, char* message, char* lastCommand) {
 
@@ -623,7 +563,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
 
     char command[MAX_COMMAND_LENGTH];
     char argument[MAX_COMMAND_LENGTH];
-    int numParsed = sscanf(lastCommand, "%s %99[^\n]", command, argument);
+    sscanf(input, "%s %s", command, argument);
 
     if (!playmode) {
         if (strcmp(command, "LD") == 0 ||
@@ -673,78 +613,10 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                 default:
                     // Error: Command not found
                     strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
-    // Handling commands based on playPhase directly in the conditions
-    if (strcmp(command, "P") == 0 && numParsed == 1 && !playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processP();
-        playPhase = true; // Entering play phase
-    } else if (strcmp(command, "LD") == 0 && numParsed == 2 && !playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processLD(argument);
-    } else if (strcmp(command, "SW") == 0 && numParsed == 1 && !playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processSW();
-    } else if (strcmp(command, "SI") == 0 && numParsed == 2 && !playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processSI(argument);
-    } else if (strcmp(command, "SR") == 0 && numParsed == 1 && !playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processSR();
-    } else if (strcmp(command, "SD") == 0 && numParsed == 2 && !playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processSD(argument);
-    } else if (strcmp(command, "Q") == 0 && numParsed == 1 && playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processQ();
-        playPhase = false; // Optionally reset play phase
-    } else if (strcmp(command, "U") == 0 && numParsed == 1 && playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processU();
-    } else if (strcmp(command, "R") == 0 && numParsed == 1 && playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processR();
-    } else if (strcmp(command, "S") == 0 && numParsed == 2 && playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processS(argument);
-    } else if (strcmp(command, "L") == 0 && numParsed == 2 && playPhase) {
-        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
-        processL(argument);
-    } else {
-        strncpy(message, "Error: Command Not Found or Invalid Arguments", MAX_MESSAGE_LENGTH);
-    }
-}
 
 
-
-// Function to distribute a given card deck along the columns
-void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
-    bool cardAdded[52] = { false };
-    int index = 0;
-    for (int i = 0; i < 7; i++) {
-        ListNode* currentColumn = NULL;
-        int cardsToAdd = (i == 0) ? 1 : i + 5; // Determine number of cards to be distributed in each column
-        for (int j = 0; j < cardsToAdd && index < 52; j++) {
-            while (index < 52 && cardAdded[index]) {
-                index++;
-            }
-            if (index < 52) {
-                ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
-                if (newNode == NULL) {
-                    fprintf(stderr,"Memory allocation failed\n");
-                    while (currentColumn != NULL) {
-                        ListNode* temp = currentColumn;
-                        currentColumn = currentColumn->next;
-                        free(temp);
-                    }
-                    return;
-                }
-                newNode->card = deck[index];
-                newNode->next = currentColumn;
-                currentColumn = newNode;
-                cardAdded[index] = true;
             }
         }
-        columns[i] = currentColumn;
     }
 //printf("%d", strcmp(command, "F"));
 //    printf("%d", strcmp(command, "C"));
@@ -758,7 +630,7 @@ void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
                 if(test >=1 && test <=7 ){
                     strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
                     //Call relevant method here.
-                    processMoveCommand(command, columns, foundations, message);
+                    performMove(command, columns, foundations, message);
                 }
                 break;
             case 'F':
@@ -766,106 +638,20 @@ void distributeDeckToColumns(Card deck[], ListNode* columns[]) {
                 if(test >=1 && test <=4 ){
                     strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
                     //Call relevant method here.
-                    processMoveCommand(command, columns, foundations, message);
+                    performMove(command, columns, foundations, message);
                 }
                 break;
             default:
                 // Error: Command not found
                 strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
 
-// Function to "split" a deck of cards after "split" amount of cards iterated through and interleave into shuffled deck
-Card* split(Card deck[], int split) {
-    // Allocate memory for the new shuffled deck
-    Card* shuffledDeck = (Card*)malloc(52 * sizeof(Card));
-    if (shuffledDeck == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return NULL;
+
+        }
     }
 
-    // Create piles dependent on the split and generate a random split-value if none is provided
-    Card* pile1;
-    Card* pile2;
 
-    if (split > 0 && split < 52) {
-        pile1 = deck;
-        pile2 = deck + split;
-    } else {
-        srand(time(NULL)); // Seed the random number generator
-        split = rand() % 52; // Generate a random split
-        pile1 = deck;
-        pile2 = deck + split;
-    }
 
-    printf("Pile1\n");
-    printDeck(pile1);
-    printf("\n");
-
-    printf("Pile2\n");
-    printDeck(pile2);
-    printf("\n");
-
-    // Index variables for iterating through piles a card at a time
-    int index1 = 0;
-    int index2 = 0;
-    int shuffledIndex = 0;
-
-    // Interleave cards from the two piles into the shuffled deck
-    while (index1 < split && index2 < 52 - split) {
-        shuffledDeck[shuffledIndex++] = pile1[index1++];
-        shuffledDeck[shuffledIndex++] = pile2[index2++];
-    }
-
-    // If there are remaining cards in pile1 or pile2, we add them to the shuffled deck
-    while (index1 < split) {
-        shuffledDeck[shuffledIndex++] = pile1[index1++];
-    }
-
-    while (index2 < 52 - split) {
-        shuffledDeck[shuffledIndex++] = pile2[index2++];
-    }
-
-    return shuffledDeck;
 }
-
-// Function to shuffle a deck using the Fisher-Yates shuffling-algorithm
-void shuffleDeck(Card deck[]) {
-    //Initialize an int value to keep track of the number of cards in the deck
-    int numCards = 50;
-
-    // Initialize the shuffled deck
-    Card shuffledDeck[numCards];
-
-    // Initialize a random seed
-    srand(time(NULL));
-
-    // Integer to store the size of the unshuffled pile
-    int unshuffledSize = numCards;
-
-    // Loop to iterate through cards
-    for (int i = 0; i < numCards; i++) {
-        // Select a random index in the unshuffled pile
-        int randomIndex = rand() % unshuffledSize;
-
-        // The random index is attributed to a random card and moved to the shuffled deck
-        shuffledDeck[i] = deck[randomIndex];
-
-        // The selected card is then replaced with top card from the unshuffled pile
-        deck[randomIndex] = deck[unshuffledSize - 1];
-
-        // Decrement size of unshuffled pile
-        unshuffledSize--;
-    }
-
-    // Update our deck to match the shuffled deck
-    for (int i = 0; i < numCards; i++) {
-        deck[i] = shuffledDeck[i];
-    }
-}
-
-
-
-
-
 
 int main() {
     // Initialize a deck
@@ -904,7 +690,7 @@ int main() {
         displayBoard(columns, foundations, isEmpty, message, lastCommand);
 
         //Important
-//        *columns = NULL;
+        *columns = NULL;
     }
 
 }
