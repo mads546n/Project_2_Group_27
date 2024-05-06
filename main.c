@@ -151,6 +151,7 @@ void processSD(char* argument) {
 
 void processP() {
     playPhase = true;
+    playmode = true;
 
     printf("Playmode On\n");
 }
@@ -659,62 +660,66 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
     char argument[MAX_COMMAND_LENGTH];
     sscanf(input, "%s %s", command, argument);
 
-    if (!playmode) {
-        if (strcmp(command, "LD") == 0 ||
-            strcmp(command, "SW") == 0 ||
-            strcmp(command, "SI") == 0 ||
-            strcmp(command, "SR") == 0 ||
-            strcmp(command, "SD") == 0 ||
-            strcmp(command, "P") == 0 ||
-            strcmp(command, "Q") == 0 ||
-            strcmp(command, "U") == 0 ||
-            strcmp(command, "R") == 0 ||
-            strcmp(command, "S") == 0 ||
-            strcmp(command, "L") == 0 || strcmp(command, "QQ") == 0) {
-            // If the input startDeck is valid, update the message
-            strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
 
-            switch (command[0]) {
+    if (strcmp(command, "LD") == 0 ||
+        strcmp(command, "SW") == 0 ||
+        strcmp(command, "SI") == 0 ||
+        strcmp(command, "SR") == 0 ||
+        strcmp(command, "SD") == 0 ||
+        strcmp(command, "P") == 0 ||
+        strcmp(command, "Q") == 0 ||
+        strcmp(command, "U") == 0 ||
+        strcmp(command, "R") == 0 ||
+        strcmp(command, "S") == 0 ||
+        strcmp(command, "L") == 0 || strcmp(command, "QQ") == 0) {
+        // If the input startDeck is valid, update the message
+        strncpy(message, "Command Ok", MAX_MESSAGE_LENGTH);
+
+        switch (command[0]) {
+
                 case 'L':
-                    if (command[1] == 'D')
-                        processLD(argument);
-                    else
-                        processL(argument);
-                    break;
+                if (command[1] == 'D' &&  !playmode)
+                    processLD(argument);
+                else if (!playmode)
+                    processL(argument);
+                break;
                 case 'S':
+                    if (playmode)
                     processS(argument);
                     break;
                 case 'R':
+                    if (playmode)
                     processR();
                     break;
                 case 'U':
+                    if (playmode)
                     processU();
                     break;
                 case 'Q':
                     if (command[0] == 'Q' && command[1] == 'Q')
                         processQQ();
-                    else if (command[0] == 'Q')
+                    else if (command[0] == 'Q' && playmode)
                         processQ();
                     break;
                 case 'P':
+                    if (!playmode)
                     processP();
                     playmode = true;
                     break;
                 case 'I':
-                    if (command[1] == 'I')
+                    if (command[1] == 'I' && !playmode)
                         processSI(argument);
                     break;
                 case 'W':
+                    if (!playmode)
                     processSW();
                     break;
                 default:
                     // Error: Command not found
                     strncpy(message, "Error: Command Not Found", MAX_MESSAGE_LENGTH);
-
-
             }
         }
-    }
+
 //printf("%d", strcmp(command, "F"));
 //    printf("%d", strcmp(command, "C"));
 
