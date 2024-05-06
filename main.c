@@ -663,7 +663,7 @@ void displayBoard(ListNode* columns[], FoundationNode* foundations[], bool areCo
                     processU();
                     break;
                 case 'Q':
-                    if (command[1] == 'Q')
+                    if (strcmp(command, "QQ") == 0)
                         processQQ();
                     else
                         processQ();
